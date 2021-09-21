@@ -247,3 +247,8 @@ result = identity_red(imag)
 cv2.imshow("image", result)
 cv2.waitKey(0)
 
+# activate venv
+# .\venv\Scripts\activate
+
+# deactivate venv
+# deactivate
