@@ -7,8 +7,11 @@ from sklearn import svm
 
 
 def train_red():
-    folder_train_red = [["train_set/00001", 1], ["train_set/00014", 14], ["train_set/00017", 17],
-                        ["train_set/00019", 19], ["train_set/00021", 21]]
+    # folder_train_red = [["train_set/00001", 1], ["train_set/00014", 14], ["train_set/00017", 17],
+    #                     ["train_set/00019", 19], ["train_set/00021", 21]]
+    # TODO: Separar los signs de velocidad por numero del limite
+    folder_train_red = [["my_train_set/red_signs/ceda-el-paso-signal", "CEDA EL PASO"], ["my_train_set/red_signs/no-sobrepasar", "NO SOBREPASAR"], ["my_train_set/red_signs/pare-signal", "PARE"],
+                        ["my_train_set/red_signs/velocidad-signal", "SEÑAL DE VELOCIDAD"]]
 
     hog_list_red = list()
     label_list_red = list()
@@ -18,6 +21,7 @@ def train_red():
         value_red = name_red[0]
         label_red = name_red[1]
         image_list_red = [os.path.join(value_red, f) for f in os.listdir(value_red) if f.endswith('.ppm')]
+        # print(image_list_red)
 
         for image_red in image_list_red:
             count_red += 1
@@ -54,7 +58,8 @@ def test_red(clf_red, image):
 
 def train_yellow():
     # THESE ARE IMAGES IN PPM FOR BLUE, THEY WONT RELATE TO YELLOW
-    folder_train_yellow = [["train_set/00035", 35], ["train_set/00038", 38], ["train_set/00045", 45], ["negative", 100]]
+    # folder_train_yellow = [["train_set/00035", 35], ["train_set/00038", 38], ["train_set/00045", 45], ["negative", 100]]
+    folder_train_yellow = [["my_train_set/yellow_signs/flecha-derecha-signal", "CURVA HACIA LA DERECHA"], ["my_train_set/yellow_signs/flecha-izquierda-signal", "CURVA HACIA LA IZQUIERDA"], ["my_train_set/yellow_signs/zona-escuela", "ZONA ESCUELA"]]
 
     hog_list_yellow = list()
     label_list_yellow = list()

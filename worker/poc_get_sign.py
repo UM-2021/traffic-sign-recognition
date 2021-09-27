@@ -1,7 +1,6 @@
 import cv2 
 import numpy as np
 import os
-import cv2
 import imutils
 import my_classification as train
 from PIL import Image
@@ -87,7 +86,7 @@ def identity_red(imag):
             #     continue
             # if aspect_ratio_2 <= 0.3:
             #     continue
-            print("HERE")
+            # print("HERE")
             hull = cv2.convexHull(c)
             # cv2.drawContours(imag, [hull], -1, (0, 255, 0), 1)
 
@@ -121,6 +120,11 @@ def identity_red(imag):
             cnts_list.append(c)
             label_list.append(label)
 
+            print(out_resize)
+
+            cv2.imshow("image", out_resize)
+            cv2.waitKey(0)
+            
             return out_resize
 
 def identify_yellow(imag, clf_yellow):

@@ -12,5 +12,10 @@ If not the first time executing:
 4 - Enter the virtual env:
 conda activate "virtual_env_name"
 
+In our case:
+We have to go to the project directory and run:
+
+conda activate tsr_venv
+
 5 - run the python script:
 python poc_get_sign.py
