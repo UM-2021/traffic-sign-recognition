@@ -6,15 +6,10 @@ import asyncio
 import websockets
 
 
-async def hello():
+async def send_sign():
     uri = "ws://localhost:3000"
     async with websockets.connect(uri) as websocket:
-        name = input("What's your name? ")
+        sign = "2"
+        await websocket.send(sign)
 
-        await websocket.send(name)
-        print(f">>> {name}")
-
-        greeting = await websocket.recv()
-        print(f"<<< {greeting}")
-
-asyncio.run(hello())
+asyncio.run(send_sign())

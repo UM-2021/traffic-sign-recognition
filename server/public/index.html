@@ -2,13 +2,7 @@
 <html lang="en">
 	<head>
 		<link rel="stylesheet" href="./stylesheets/style.css" />
-		<script
-			src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.2.0/socket.io.min.js"
-			integrity="sha512-2hIBfT6wur46uR5ayhmyICuA8s15BvJhagB+jZImgktQAy832P7EuY8njl1HGp4YS0Sk8DXRo9dByhvD3jfDxA=="
-			crossorigin="anonymous"
-			referrerpolicy="no-referrer"
-		></script>
-		<script>
+		<!-- <script>
 			const socket = io.connect('http://localhost:3000');
 
 			window.onload = function () {
@@ -23,7 +17,7 @@
 					signName.innerText = data.name;
 				});
 			};
-		</script>
+		</script> -->
 		<meta charset="UTF-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -34,5 +28,6 @@
 			<img id="image" src="" />
 			<p><code id="signName"></code></p>
 		</div>
+		<script src="./socket.js"></script>
 	</body>
 </html>

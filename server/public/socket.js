@@ -1,12 +1,11 @@
-let HOST = location.origin.replace(/^http/, 'ws')
-let ws = new WebSocket(HOST);
-let img;
-let signName;
-
-ws.onmessage = (event) => {
-  const data = event.data;
-  img = document.getElementById('image');
-  signName = document.getElementById('signName');
-  img.src = data.img;
-  signName.innerHTML = data.name;
-}
+(function () {
+	let img = document.getElementById('image');
+	let signName = document.getElementById('signName');
+  let ws = new WebSocket(`ws://${location.host}`);
+  
+	ws.onmessage = function (event) {
+		const data = JSON.parse(event.data);
+		img.src = data.image;
+		signName.innerHTML = data.name;
+	};
+})();
