@@ -243,16 +243,9 @@ def identify_yellow(imag, clf_yellow):
         return None, None
 
 clf_red = train.train_red()
-# clf_blue = train.train_yellow() 
+# clf_yellow = train.train_yellow() 
 
-# imag = np.uint8(cv2.imread('./dataset/images/road97.png'))
-imag = np.uint8(cv2.imread('fernandotest.jpeg'))
+imag = np.uint8(cv2.imread('dos_carteles_test.png'))
 result = identity_red(imag)
 cv2.imshow("image", result)
 cv2.waitKey(0)
-
-# activate venv
-# .\venv\Scripts\activate
-
-# deactivate venv
-# deactivate
