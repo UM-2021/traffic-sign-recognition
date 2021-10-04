@@ -5,7 +5,7 @@ import imutils
 import my_classification as train
 from PIL import Image
 
-def identity_red(imag):
+def identify_red(imag):
     orig = imag.copy()
     imag_red = imag.copy()
 
@@ -70,13 +70,11 @@ def identity_red(imag):
     cnts = imutils.grab_contours(cnts)
     max_cnts = 3  # no frame we want to detect more than 3
     if not cnts == []:
-        # print("HERE")
         cnts_sorted = sorted(cnts, key=cv2.contourArea, reverse=True)
         if len(cnts_sorted) > max_cnts:
             cnts_sorted = cnts_sorted[:3]
 
         for c in cnts_sorted:
-            # print("HERE")
             x, y, w, h = cv2.boundingRect(c)
             # if x < 800:
             #     continue
@@ -125,9 +123,9 @@ def identity_red(imag):
             cv2.imshow("image", out_resize)
             cv2.waitKey(0)
             
-            return out_resize
+            return out_resize, prob, predict
 
-def identify_yellow(imag, clf_yellow):
+def identify_yellow(imag):
     label_list = list()
     cnts_list = list()
     mser_yellow = cv2.MSER_create(8, 400, 4000)
@@ -193,20 +191,20 @@ def identify_yellow(imag, clf_yellow):
 
         for c in cnts_sorted:
             x, y, w, h = cv2.boundingRect(c)
-            if x < 100:
-                continue
-            if h < 20:
-                continue
+            # if x < 100:
+            #     continue
+            # if h < 20:
+            #     continue
 
-            if y > 400:
-                continue
+            # if y > 400:
+            #     continue
 
-            aspect_ratio_1 = w / h
-            aspect_ratio_2 = h / w
-            if aspect_ratio_1 <= 0.5 or aspect_ratio_1 > 1.2:
-                continue
-            if aspect_ratio_2 <= 0.5:
-                continue
+            # aspect_ratio_1 = w / h
+            # aspect_ratio_2 = h / w
+            # if aspect_ratio_1 <= 0.5 or aspect_ratio_1 > 1.2:
+            #     continue
+            # if aspect_ratio_2 <= 0.5:
+            #     continue
 
             hull = cv2.convexHull(c)
 
@@ -227,6 +225,8 @@ def identify_yellow(imag, clf_yellow):
 
             out = imag[topx:botx + 1, topy:boty + 1]
             out_resize = cv2.resize(out, (64, 64), interpolation=cv2.INTER_CUBIC)
+
+            #PREDICTION
             predict, prob = train.test_yellow(clf_yellow, out_resize)
             print(np.max(prob))
             if np.max(prob) < 0.78:
@@ -238,14 +238,34 @@ def identify_yellow(imag, clf_yellow):
             
             cnts_list.append(c)
             label_list.append(label)
-        return cnts_list, label_list
-    else:
-        return None, None
+        return out_resize, prob, predict
+    # else:
+    #     return None, None
 
 clf_red = train.train_red()
-# clf_yellow = train.train_yellow() 
+clf_yellow = train.train_yellow() 
 
-imag = np.uint8(cv2.imread('dos_carteles_test.png'))
-result = identity_red(imag)
-cv2.imshow("image", result)
-cv2.waitKey(0)
+# imag = np.uint8(cv2.imread('./my_test_set/fernandotest.jpeg'))
+imag = np.uint8(cv2.imread('./my_test_set/amarillotest.jpeg'))
+
+result_red = identify_red(imag)[0]
+result_resize_red = result_red[0]
+predict_prob_red= result_red[1]
+predict_red= result_red[2]
+
+result_yellow = identify_yellow(imag)[0]
+result_resize_yellow = result_yellow[0]
+predict_prob_yellow= result_yellow[1]
+predict_yellow= result_yellow[2]
+
+# PRINT RESULTS
+if predict_prob_red > 0.4:
+    cv2.imshow("image", result_resize_red)
+    cv2.waitKey(0)
+    print(predict_prob_red)
+    print(predict_red)
+if predict_prob_yellow > 0.4:
+    cv2.imshow("image", result_resize_yellow)
+    cv2.waitKey(0)
+    print(predict_prob_yellow)
+    print(predict_yellow)

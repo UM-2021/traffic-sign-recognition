@@ -78,9 +78,9 @@ def train_yellow():
             im_prep_yellow = cv2.resize(im_gray_yellow, (64, 64))
 
             fd_yellow, h_yellow = feature.hog(im_prep_yellow, orientations=7, pixels_per_cell=(8, 8), cells_per_block=(2, 2),
-                                          transform_sqrt=False, block_norm="L1", visualise=True)
-            cv2.imshow('hog_train', h_yellow)
-            cv2.waitKey(50)
+                                          transform_sqrt=False, block_norm="L1", visualize=True)
+            # cv2.imshow('hog_train', h_yellow)
+            # cv2.waitKey(50)
             hog_list_yellow.append(h_yellow)
             label_list_yellow.append(label_yellow)
 

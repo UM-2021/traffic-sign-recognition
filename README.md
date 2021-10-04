@@ -15,7 +15,10 @@ conda activate "virtual_env_name"
 In our case:
 We have to go to the project directory and run:
 
-conda activate tsr_venv
+conda activate tsr
 
-5 - run the python script:
+5 - Install requirements:
+pip install -r requirements.txt
+
+6 - run the python script:
 python poc_get_sign.py
