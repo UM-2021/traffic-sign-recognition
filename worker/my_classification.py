@@ -7,11 +7,10 @@ from sklearn import svm
 
 
 def train_red():
-    # folder_train_red = [["train_set/00001", 1], ["train_set/00014", 14], ["train_set/00017", 17],
-    #                     ["train_set/00019", 19], ["train_set/00021", 21]]
     # TODO: Separar los signs de velocidad por numero del limite
     folder_train_red = [["my_train_set/red_signs/ceda-el-paso-signal", "CEDA EL PASO"], ["my_train_set/red_signs/no-sobrepasar", "NO SOBREPASAR"], ["my_train_set/red_signs/pare-signal", "PARE"],
-                        ["my_train_set/red_signs/velocidad-signal", "SEÑAL DE VELOCIDAD"]]
+                        ["my_train_set/red_signs/velocidad-signal/45km", "SEÑAL DE VELOCIDAD 45 km/h"], ["my_train_set/red_signs/velocidad-signal/60km", "SEÑAL DE VELOCIDAD 60 km/h"], 
+                        ["my_train_set/red_signs/velocidad-signal/90km", "SEÑAL DE VELOCIDAD 90 km/h"],["my_train_set/red_signs/velocidad-signal/110km", "SEÑAL DE VELOCIDAD 110 km/h"] ]
 
     hog_list_red = list()
     label_list_red = list()
@@ -57,8 +56,6 @@ def test_red(clf_red, image):
     return predict, class_prob
 
 def train_yellow():
-    # THESE ARE IMAGES IN PPM FOR BLUE, THEY WONT RELATE TO YELLOW
-    # folder_train_yellow = [["train_set/00035", 35], ["train_set/00038", 38], ["train_set/00045", 45], ["negative", 100]]
     folder_train_yellow = [["my_train_set/yellow_signs/flecha-derecha-signal", "CURVA HACIA LA DERECHA"], ["my_train_set/yellow_signs/flecha-izquierda-signal", "CURVA HACIA LA IZQUIERDA"], ["my_train_set/yellow_signs/zona-escuela", "ZONA ESCUELA"]]
 
     hog_list_yellow = list()
@@ -98,7 +95,7 @@ def train_yellow():
 def test_yellow(clf_yellow, image):
     im_test_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     fd_test_yellow, h_test_yellow = feature.hog(im_test_gray, orientations=7, pixels_per_cell=(8,8),
-                                            cells_per_block=(2, 2), transform_sqrt=False, block_norm="L1", visualise=True)
+                                            cells_per_block=(2, 2), transform_sqrt=False, block_norm="L1", visualize=True)
 
     hog = h_test_yellow.reshape(64 * 64)
     predict = clf_yellow.predict([hog])

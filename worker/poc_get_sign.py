@@ -18,14 +18,24 @@ def identify_red(imag):
     img2 = imag.copy()[:500, :]  # red signs are only on the above few rows
     img_yuv = cv2.cvtColor(img, cv2.COLOR_BGR2YUV)
 
+    # cv2.imshow("img_yuv", img_yuv)
+    # cv2.waitKey(0)
+
     # equalize the histogram of the Y channel
     img_yuv[:, :, 0] = cv2.equalizeHist(img_yuv[:, :, 0])
 
     # convert the YUV image back to RGB format
     img_output = cv2.cvtColor(img_yuv, cv2.COLOR_YUV2BGR)
 
+    # cv2.imshow("img_output", img_output)
+    # cv2.waitKey(0)
+
     # mask to extract red
     img_hsv = cv2.cvtColor(imag, cv2.COLOR_BGR2HSV)
+
+    # cv2.imshow("img_hsv", img_hsv)
+    # cv2.waitKey(0)
+
     lower_red_1 = np.array([0, 70, 60])
     upper_red_1 = np.array([10, 255, 255])
     mask_1 = cv2.inRange(img_hsv, lower_red_1, upper_red_1)
@@ -55,7 +65,10 @@ def identify_red(imag):
 
     blank = np.zeros_like(red_mask)
     cv2.fillPoly(np.uint8(blank), hulls, (0, 0, 255))  # fill a blank image with the detected hulls
+
     # cv2.imshow("mser_red", blank)
+    # cv2.waitKey(0)
+
     # perform some operations on the detected hulls from MSER
     kernel_1 = np.ones((3, 3), np.uint8)
     kernel_2 = np.ones((5, 5), np.uint8)
@@ -84,7 +97,6 @@ def identify_red(imag):
             #     continue
             # if aspect_ratio_2 <= 0.3:
             #     continue
-            # print("HERE")
             hull = cv2.convexHull(c)
             # cv2.drawContours(imag, [hull], -1, (0, 255, 0), 1)
 
@@ -106,8 +118,8 @@ def identify_red(imag):
 
             # PREDICTION
             predict, prob = train.test_red(clf_red, out_resize)
-            print(np.max(prob))
-            print(predict)
+            # print(np.max(prob))
+            # print(predict)
             if np.max(prob) < 0.78:
                 continue
             cv2.rectangle(imag, (x, y), (int(x + w), int(y + h)), (0, 255, 0), 2)
@@ -118,20 +130,21 @@ def identify_red(imag):
             cnts_list.append(c)
             label_list.append(label)
 
-            print(out_resize)
-
-            cv2.imshow("image", out_resize)
-            cv2.waitKey(0)
+            # cv2.imshow("image", out_resize)
+            # cv2.waitKey(0)
             
-            return out_resize, prob, predict
+            return out_resize, np.max(prob), predict
 
 def identify_yellow(imag):
     label_list = list()
     cnts_list = list()
-    mser_yellow = cv2.MSER_create(8, 400, 4000)
+    mser_yellow = cv2.MSER_create(8, 200, 3000)
 
     img = imag.copy()
     img_yuv = cv2.cvtColor(img, cv2.COLOR_BGR2YUV)
+
+    # cv2.imshow("img_yuv", img_yuv)
+    # cv2.waitKey(0)
 
     # equalize the histogram of the Y channel
     img_yuv[:, :, 0] = cv2.equalizeHist(img_yuv[:, :, 0])
@@ -139,15 +152,23 @@ def identify_yellow(imag):
     # convert the YUV image back to RGB format
     img_output = cv2.cvtColor(img_yuv, cv2.COLOR_YUV2BGR)
 
+    # cv2.imshow("img_output", img_output)
+    # cv2.waitKey(0)
+
     # convert the image to HSV format for color segmentation
     img_hsv = cv2.cvtColor(imag, cv2.COLOR_BGR2HSV)
+    # cv2.imshow("img_hsv", img_hsv)
+    # cv2.waitKey(0)
 
     # mask to extract yellow
-    lower_yellow = np.array([60, 40, 100])
-    upper_yellow = np.array([56, 100, 100])
+    # lower_yellow = np.array([80, 100, 100])
+    # upper_yellow = np.array([100, 255, 255])
+    lower_yellow = np.array([22, 93, 0])
+    upper_yellow = np.array([100, 255, 255])
     mask = cv2.inRange(img_hsv, lower_yellow, upper_yellow)
 
-    yellow_mask = cv2.bitwise_and(img_output, img_output, mask=mask)
+    yellow_mask_ = cv2.bitwise_and(img_output, img_output, mask=mask)
+    yellow_mask = yellow_mask_[:500, :]
 
     # seperate out the channels
     r_channel = yellow_mask[:, :, 2]
@@ -159,18 +180,20 @@ def identify_yellow(imag):
     filtered_g = cv2.medianBlur(g_channel, 5)
     filtered_b = cv2.medianBlur(b_channel, 5)
 
-    # create a yellow gray space TODO YELLOW MASK
-    filtered_y = -0.5 * filtered_r + 3 * filtered_b - 2 * filtered_g
+    # create a yellow gray space TODO YELLOW MASK, estos coeficientes no estan del todo bien
+    filtered_y = 4 * filtered_r -0.5 * filtered_b + 2 * filtered_g
 
     # Do MSER
-    regions, _ = mser_yellow.detectRegions(np.uint8(filtered_b))
+    regions, _ = mser_yellow.detectRegions(np.uint8(filtered_y))
 
     hulls = [cv2.convexHull(p.reshape(-1, 1, 2)) for p in regions]
 
     blank = np.zeros_like(yellow_mask)
     cv2.fillPoly(np.uint8(blank), hulls, (255, 0, 0))
 
-    # cv2.imshow("mser_yellow", blank)
+    cv2.imshow("mser_yellow", blank)
+    cv2.waitKey(0)
+
     kernel_1 = np.ones((3, 3), np.uint8)
     kernel_2 = np.ones((5, 5), np.uint8)
 
@@ -178,9 +201,9 @@ def identify_yellow(imag):
     dilation = cv2.dilate(erosion, kernel_2, iterations=1)
     opening = cv2.morphologyEx(dilation, cv2.MORPH_OPEN, kernel_2)
 
-    _, b_thresh = cv2.threshold(opening[:, :, 0], 60, 255, cv2.THRESH_BINARY)
+    _, y_thresh = cv2.threshold(opening[:, :, 0], 60, 255, cv2.THRESH_BINARY)
 
-    cnts = cv2.findContours(b_thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    cnts = cv2.findContours(y_thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     cnts = imutils.grab_contours(cnts)
     max_cnts = 3  # no frame we want to detect more than 3
 
@@ -238,34 +261,43 @@ def identify_yellow(imag):
             
             cnts_list.append(c)
             label_list.append(label)
-        return out_resize, prob, predict
-    # else:
-    #     return None, None
+
+            cv2.imshow("image", out_resize)
+            cv2.waitKey(0)
+
+        return out_resize, np.max(prob), predict
+
 
 clf_red = train.train_red()
 clf_yellow = train.train_yellow() 
 
 # imag = np.uint8(cv2.imread('./my_test_set/fernandotest.jpeg'))
-imag = np.uint8(cv2.imread('./my_test_set/amarillotest.jpeg'))
+imag = np.uint8(cv2.imread('./my_test_set/amarillotest2.jpeg'))
 
-result_red = identify_red(imag)[0]
-result_resize_red = result_red[0]
-predict_prob_red= result_red[1]
-predict_red= result_red[2]
+result_red = identify_red(imag)
+# print(result_red)
+if result_red:
+    result_resize_red = result_red[0]
+    predict_prob_red= result_red[1]
+    predict_red= result_red[2]
 
-result_yellow = identify_yellow(imag)[0]
-result_resize_yellow = result_yellow[0]
-predict_prob_yellow= result_yellow[1]
-predict_yellow= result_yellow[2]
+result_yellow = identify_yellow(imag)
+
+if result_yellow:
+    result_resize_yellow = result_yellow[0]
+    predict_prob_yellow= result_yellow[1]
+    predict_yellow= result_yellow[2]
 
 # PRINT RESULTS
-if predict_prob_red > 0.4:
+if result_red and predict_prob_red > 0.7:
+    print("PROB RED PREDICTION: ", predict_prob_red)
+    print("RED PREDICTION: ", predict_red)
     cv2.imshow("image", result_resize_red)
     cv2.waitKey(0)
-    print(predict_prob_red)
-    print(predict_red)
-if predict_prob_yellow > 0.4:
+    
+if result_yellow and predict_prob_yellow > 0.6:
+    print("PROB YELLOW PREDICTION: ", predict_prob_yellow)
+    print("YELLOW PREDICTION: ", predict_yellow)
     cv2.imshow("image", result_resize_yellow)
     cv2.waitKey(0)
-    print(predict_prob_yellow)
-    print(predict_yellow)
+    
