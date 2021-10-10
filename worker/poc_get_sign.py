@@ -6,8 +6,8 @@ import my_classification as train
 from PIL import Image
 
 def identify_red(imag):
-    orig = imag.copy()
-    imag_red = imag.copy()
+    # orig = imag.copy()
+    # imag_red = imag.copy()
 
     label_list = list()
     cnts_list = list()
@@ -15,7 +15,7 @@ def identify_red(imag):
 
     img = imag.copy()
 
-    img2 = imag.copy()[:500, :]  # red signs are only on the above few rows
+    # img2 = imag.copy()[:500, :]  # red signs are only on the above few rows
     img_yuv = cv2.cvtColor(img, cv2.COLOR_BGR2YUV)
 
     # cv2.imshow("img_yuv", img_yuv)
@@ -43,8 +43,8 @@ def identify_red(imag):
     upper_red_2 = np.array([180, 255, 255])
     mask_2 = cv2.inRange(img_hsv, lower_red_2, upper_red_2)
     mask = cv2.bitwise_or(mask_1, mask_2)
-    red_mask_ = cv2.bitwise_and(img_output, img_output, mask=mask)
-    red_mask = red_mask_[:500, :]
+    red_mask = cv2.bitwise_and(img_output, img_output, mask=mask)
+    red_mask = red_mask[:500, :]
 
     # separating channels
     r_channel = red_mask[:, :, 2]
@@ -82,7 +82,10 @@ def identify_red(imag):
     cnts = cv2.findContours(r_thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     cnts = imutils.grab_contours(cnts)
     max_cnts = 3  # no frame we want to detect more than 3
+    print("HERE RED")
+
     if not cnts == []:
+        print("HERE RED")
         cnts_sorted = sorted(cnts, key=cv2.contourArea, reverse=True)
         if len(cnts_sorted) > max_cnts:
             cnts_sorted = cnts_sorted[:3]
@@ -98,10 +101,10 @@ def identify_red(imag):
             # if aspect_ratio_2 <= 0.3:
             #     continue
             hull = cv2.convexHull(c)
-            # cv2.drawContours(imag, [hull], -1, (0, 255, 0), 1)
+            cv2.drawContours(imag, [hull], -1, (0, 255, 0), 1)
 
             mask = np.zeros_like(imag)
-            # cv2.drawContours(mask, [c], -1, (255, 255, 255), -1)  # Draw filled contour in mask
+            cv2.drawContours(mask, [c], -1, (255, 255, 255), -1)  # Draw filled contour in mask
             cv2.rectangle(mask, (x, y), (int(x + w), int(y + h)), (255, 255, 255), -1)
 
             out = np.zeros_like(imag)  # Extract out the object and place into output image
@@ -118,8 +121,8 @@ def identify_red(imag):
 
             # PREDICTION
             predict, prob = train.test_red(clf_red, out_resize)
-            # print(np.max(prob))
-            # print(predict)
+            print(np.max(prob))
+            print(predict)
             if np.max(prob) < 0.78:
                 continue
             cv2.rectangle(imag, (x, y), (int(x + w), int(y + h)), (0, 255, 0), 2)
@@ -130,8 +133,8 @@ def identify_red(imag):
             cnts_list.append(c)
             label_list.append(label)
 
-            # cv2.imshow("image", out_resize)
-            # cv2.waitKey(0)
+            cv2.imshow("image", out_resize)
+            cv2.waitKey(0)
             
             return out_resize, np.max(prob), predict
 
@@ -163,12 +166,15 @@ def identify_yellow(imag):
     # mask to extract yellow
     # lower_yellow = np.array([80, 100, 100])
     # upper_yellow = np.array([100, 255, 255])
+    # lower_yellow = np.array([22, 93, 0])
+    # upper_yellow = np.array([45, 255, 255])
     lower_yellow = np.array([22, 93, 0])
-    upper_yellow = np.array([100, 255, 255])
+    upper_yellow = np.array([106, 255, 255])
+
     mask = cv2.inRange(img_hsv, lower_yellow, upper_yellow)
 
-    yellow_mask_ = cv2.bitwise_and(img_output, img_output, mask=mask)
-    yellow_mask = yellow_mask_[:500, :]
+    yellow_mask = cv2.bitwise_and(img_output, img_output, mask=mask)
+    # yellow_mask = yellow_mask[:500, :]
 
     # seperate out the channels
     r_channel = yellow_mask[:, :, 2]
@@ -181,7 +187,7 @@ def identify_yellow(imag):
     filtered_b = cv2.medianBlur(b_channel, 5)
 
     # create a yellow gray space TODO YELLOW MASK, estos coeficientes no estan del todo bien
-    filtered_y = 4 * filtered_r -0.5 * filtered_b + 2 * filtered_g
+    filtered_y = 3 * filtered_r - 3 * filtered_b - 2 * filtered_g
 
     # Do MSER
     regions, _ = mser_yellow.detectRegions(np.uint8(filtered_y))
@@ -189,7 +195,8 @@ def identify_yellow(imag):
     hulls = [cv2.convexHull(p.reshape(-1, 1, 2)) for p in regions]
 
     blank = np.zeros_like(yellow_mask)
-    cv2.fillPoly(np.uint8(blank), hulls, (255, 0, 0))
+    cv2.fillPoly(np.uint8(blank), hulls, (0, 255, 255))
+
 
     cv2.imshow("mser_yellow", blank)
     cv2.waitKey(0)
@@ -201,13 +208,18 @@ def identify_yellow(imag):
     dilation = cv2.dilate(erosion, kernel_2, iterations=1)
     opening = cv2.morphologyEx(dilation, cv2.MORPH_OPEN, kernel_2)
 
-    _, y_thresh = cv2.threshold(opening[:, :, 0], 60, 255, cv2.THRESH_BINARY)
+    cv2.imshow("mser_yellow", opening[:, :, 2])
+    cv2.waitKey(0)
+
+    _, y_thresh = cv2.threshold(opening[:, :, 2], 0, 255, cv2.THRESH_BINARY)
 
     cnts = cv2.findContours(y_thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     cnts = imutils.grab_contours(cnts)
     max_cnts = 3  # no frame we want to detect more than 3
+    print("HERE YELLOW")
 
     if not cnts == []:
+        print("HERE YELLOW")
         cnts_sorted = sorted(cnts, key=cv2.contourArea, reverse=True)
         if len(cnts_sorted) > max_cnts:
             cnts_sorted = cnts_sorted[:3]
@@ -231,11 +243,11 @@ def identify_yellow(imag):
 
             hull = cv2.convexHull(c)
 
-            # cv2.rectangle(imag, (x, y), (int(x+w), int(y+h)), (0, 255, 0), 2)
-            # cv2.drawContours(imag, [hull], -1, (0, 255, 0), 2)
+            cv2.rectangle(imag, (x, y), (int(x+w), int(y+h)), (0, 255, 0), 2)
+            cv2.drawContours(imag, [hull], -1, (0, 255, 0), 2)
 
             mask = np.zeros_like(imag)
-            # cv2.drawContours(mask, [c], -1, (255, 255, 255), -1)  # Draw filled contour in mask
+            cv2.drawContours(mask, [c], -1, (255, 255, 255), -1)  # Draw filled contour in mask
             cv2.rectangle(mask, (x, y), (int(x + w), int(y + h)), (255, 255, 255), -1)
             out = np.zeros_like(imag)  # Extract out the object and place into output image
             out[mask == 255] = imag[mask == 255]
@@ -252,12 +264,13 @@ def identify_yellow(imag):
             #PREDICTION
             predict, prob = train.test_yellow(clf_yellow, out_resize)
             print(np.max(prob))
-            if np.max(prob) < 0.78:
-                continue
+            print(predict)
+            # if np.max(prob) < 0.78:
+            #     continue
             cv2.rectangle(imag, (x, y), (int(x + w), int(y + h)), (0, 255, 0), 2)
             label = predict[0]
-            if label == 100:
-                continue
+            # if label == 100:
+            #     continue
             
             cnts_list.append(c)
             label_list.append(label)
@@ -265,17 +278,18 @@ def identify_yellow(imag):
             cv2.imshow("image", out_resize)
             cv2.waitKey(0)
 
-        return out_resize, np.max(prob), predict
+            return out_resize, np.max(prob), predict
 
 
 clf_red = train.train_red()
 clf_yellow = train.train_yellow() 
 
 # imag = np.uint8(cv2.imread('./my_test_set/fernandotest.jpeg'))
-imag = np.uint8(cv2.imread('./my_test_set/amarillotest2.jpeg'))
+imag = np.uint8(cv2.imread('./my_test_set/amarillotest4.jpeg'))
+# imag = np.uint8(cv2.imread('./my_test_set/testnico1.png'))
 
 result_red = identify_red(imag)
-# print(result_red)
+
 if result_red:
     result_resize_red = result_red[0]
     predict_prob_red= result_red[1]
@@ -283,19 +297,24 @@ if result_red:
 
 result_yellow = identify_yellow(imag)
 
+# print(result_yellow)
+
 if result_yellow:
     result_resize_yellow = result_yellow[0]
     predict_prob_yellow= result_yellow[1]
     predict_yellow= result_yellow[2]
 
 # PRINT RESULTS
-if result_red and predict_prob_red > 0.7:
+
+print("\n\nRESULTS:")
+
+if result_red and predict_prob_red > 0.2: # and predict_prob_red > predict_prob_yellow:
     print("PROB RED PREDICTION: ", predict_prob_red)
     print("RED PREDICTION: ", predict_red)
     cv2.imshow("image", result_resize_red)
     cv2.waitKey(0)
     
-if result_yellow and predict_prob_yellow > 0.6:
+if result_yellow and predict_prob_yellow > 0.2: # and predict_prob_red < predict_prob_yellow:
     print("PROB YELLOW PREDICTION: ", predict_prob_yellow)
     print("YELLOW PREDICTION: ", predict_yellow)
     cv2.imshow("image", result_resize_yellow)
