@@ -44,7 +44,7 @@ def identify_red(imag):
     mask_2 = cv2.inRange(img_hsv, lower_red_2, upper_red_2)
     mask = cv2.bitwise_or(mask_1, mask_2)
     red_mask = cv2.bitwise_and(img_output, img_output, mask=mask)
-    red_mask = red_mask[:500, :]
+    # red_mask = red_mask[:500, :]
 
     # separating channels
     r_channel = red_mask[:, :, 2]
@@ -66,8 +66,8 @@ def identify_red(imag):
     blank = np.zeros_like(red_mask)
     cv2.fillPoly(np.uint8(blank), hulls, (0, 0, 255))  # fill a blank image with the detected hulls
 
-    # cv2.imshow("mser_red", blank)
-    # cv2.waitKey(0)
+    cv2.imshow("mser_red", blank)
+    cv2.waitKey(0)
 
     # perform some operations on the detected hulls from MSER
     kernel_1 = np.ones((3, 3), np.uint8)
@@ -123,12 +123,12 @@ def identify_red(imag):
             predict, prob = train.test_red(clf_red, out_resize)
             print(np.max(prob))
             print(predict)
-            if np.max(prob) < 0.78:
-                continue
+            # if np.max(prob) < 0.78:
+            #     continue
             cv2.rectangle(imag, (x, y), (int(x + w), int(y + h)), (0, 255, 0), 2)
             label = predict[0]
-            if label == 100:
-                continue
+            # if label == 100:
+            #     continue
             
             cnts_list.append(c)
             label_list.append(label)
@@ -174,7 +174,7 @@ def identify_yellow(imag):
     mask = cv2.inRange(img_hsv, lower_yellow, upper_yellow)
 
     yellow_mask = cv2.bitwise_and(img_output, img_output, mask=mask)
-    # yellow_mask = yellow_mask[:500, :]
+    yellow_mask = yellow_mask[:800, :]
 
     # seperate out the channels
     r_channel = yellow_mask[:, :, 2]
@@ -198,8 +198,8 @@ def identify_yellow(imag):
     cv2.fillPoly(np.uint8(blank), hulls, (0, 255, 255))
 
 
-    cv2.imshow("mser_yellow", blank)
-    cv2.waitKey(0)
+    # cv2.imshow("mser_yellow", blank)
+    # cv2.waitKey(0)
 
     kernel_1 = np.ones((3, 3), np.uint8)
     kernel_2 = np.ones((5, 5), np.uint8)
@@ -208,8 +208,8 @@ def identify_yellow(imag):
     dilation = cv2.dilate(erosion, kernel_2, iterations=1)
     opening = cv2.morphologyEx(dilation, cv2.MORPH_OPEN, kernel_2)
 
-    cv2.imshow("mser_yellow", opening[:, :, 2])
-    cv2.waitKey(0)
+    # cv2.imshow("mser_yellow", opening[:, :, 2])
+    # cv2.waitKey(0)
 
     _, y_thresh = cv2.threshold(opening[:, :, 2], 0, 255, cv2.THRESH_BINARY)
 
@@ -275,8 +275,8 @@ def identify_yellow(imag):
             cnts_list.append(c)
             label_list.append(label)
 
-            cv2.imshow("image", out_resize)
-            cv2.waitKey(0)
+            # cv2.imshow("image", out_resize)
+            # cv2.waitKey(0)
 
             return out_resize, np.max(prob), predict
 
@@ -284,9 +284,9 @@ def identify_yellow(imag):
 clf_red = train.train_red()
 clf_yellow = train.train_yellow() 
 
-# imag = np.uint8(cv2.imread('./my_test_set/fernandotest.jpeg'))
-imag = np.uint8(cv2.imread('./my_test_set/amarillotest4.jpeg'))
-# imag = np.uint8(cv2.imread('./my_test_set/testnico1.png'))
+# imag = np.uint8(cv2.imread('./my_test_set/testnico4.png'))
+# imag = np.uint8(cv2.imread('./my_test_set/amarillotest5.png'))
+imag = np.uint8(cv2.imread('./my_test_set/cedapaso.jpg'))
 
 result_red = identify_red(imag)
 
@@ -297,7 +297,7 @@ if result_red:
 
 result_yellow = identify_yellow(imag)
 
-# print(result_yellow)
+print(result_red)
 
 if result_yellow:
     result_resize_yellow = result_yellow[0]
@@ -314,9 +314,9 @@ if result_red and predict_prob_red > 0.2: # and predict_prob_red > predict_prob_
     cv2.imshow("image", result_resize_red)
     cv2.waitKey(0)
     
-if result_yellow and predict_prob_yellow > 0.2: # and predict_prob_red < predict_prob_yellow:
-    print("PROB YELLOW PREDICTION: ", predict_prob_yellow)
-    print("YELLOW PREDICTION: ", predict_yellow)
-    cv2.imshow("image", result_resize_yellow)
-    cv2.waitKey(0)
+# if result_yellow and predict_prob_yellow > 0.2: # and predict_prob_red < predict_prob_yellow:
+#     print("PROB YELLOW PREDICTION: ", predict_prob_yellow)
+#     print("YELLOW PREDICTION: ", predict_yellow)
+#     cv2.imshow("image", result_resize_yellow)
+#     cv2.waitKey(0)
     

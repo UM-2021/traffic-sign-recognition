@@ -7,9 +7,12 @@ from sklearn import svm
 
 
 def train_red():
-    # TODO: Separar los signs de velocidad por numero del limite
+    # folder_train_red = [["my_train_set/red_signs/ceda-el-paso-signal", "CEDA EL PASO"], ["my_train_set/red_signs/no-sobrepasar", "NO SOBREPASAR"], ["my_train_set/red_signs/pare-signal", "PARE"],
+    #                     ["my_train_set/red_signs/velocidad-signal/45km", "SEÑAL DE VELOCIDAD 45 km/h"], ["my_train_set/red_signs/velocidad-signal/60km", "SEÑAL DE VELOCIDAD 60 km/h"], 
+    #                     ["my_train_set/red_signs/velocidad-signal/90km", "SEÑAL DE VELOCIDAD 90 km/h"],["my_train_set/red_signs/velocidad-signal/110km", "SEÑAL DE VELOCIDAD 110 km/h"] ]
+                    
     folder_train_red = [["my_train_set/red_signs/ceda-el-paso-signal", "CEDA EL PASO"], ["my_train_set/red_signs/no-sobrepasar", "NO SOBREPASAR"], ["my_train_set/red_signs/pare-signal", "PARE"],
-                        ["my_train_set/red_signs/velocidad-signal/45km", "SEÑAL DE VELOCIDAD 45 km/h"], ["my_train_set/red_signs/velocidad-signal/60km", "SEÑAL DE VELOCIDAD 60 km/h"], 
+                        ["my_train_set/red_signs/velocidad-signal/45km", "SEÑAL DE VELOCIDAD 45 km/h"], 
                         ["my_train_set/red_signs/velocidad-signal/90km", "SEÑAL DE VELOCIDAD 90 km/h"],["my_train_set/red_signs/velocidad-signal/110km", "SEÑAL DE VELOCIDAD 110 km/h"] ]
 
     hog_list_red = list()
