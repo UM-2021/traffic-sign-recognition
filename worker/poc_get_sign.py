@@ -67,8 +67,8 @@ def identify_red(imag):
     blank = np.zeros_like(red_mask)
     cv2.fillPoly(np.uint8(blank), hulls, (0, 0, 255))  # fill a blank image with the detected hulls
 
-    cv2.imshow("mser_red", blank)
-    cv2.waitKey(0)
+    # cv2.imshow("mser_red", blank)
+    # cv2.waitKey(0)
 
     # perform some operations on the detected hulls from MSER
     kernel_1 = np.ones((3, 3), np.uint8)
@@ -188,7 +188,7 @@ def identify_yellow(imag):
     filtered_b = cv2.medianBlur(b_channel, 5)
 
     # create a yellow gray space TODO YELLOW MASK, estos coeficientes no estan del todo bien
-    filtered_y = 3 * filtered_r - 3 * filtered_b - 2 * filtered_g
+    filtered_y = 3 * filtered_r - 2 * filtered_b + 1 * filtered_g
 
     # Do MSER
     regions, _ = mser_yellow.detectRegions(np.uint8(filtered_y))
@@ -284,12 +284,10 @@ def identify_yellow(imag):
 
 clf_red = load('red_training.joblib') 
 clf_yellow = load('yellow_training.joblib') 
-print(clf_red)
-print(type(clf_red))
 
-# imag = np.uint8(cv2.imread('./my_test_set/testnico4.png'))
-# imag = np.uint8(cv2.imread('./my_test_set/amarillotest5.png'))
-imag = np.uint8(cv2.imread('./my_test_set/cedapaso.jpg'))
+imag = np.uint8(cv2.imread('./my_test_set/60km.jpg'))
+# imag = np.uint8(cv2.imread('./my_test_set/amarelo.jpg'))
+# imag = np.uint8(cv2.imread('./my_test_set/cedapaso.jpg'))
 
 result_red = identify_red(imag)
 
@@ -300,7 +298,6 @@ if result_red:
 
 result_yellow = identify_yellow(imag)
 
-print(result_red)
 
 if result_yellow:
     result_resize_yellow = result_yellow[0]
@@ -317,9 +314,9 @@ if result_red and predict_prob_red > 0.2: # and predict_prob_red > predict_prob_
     cv2.imshow("image", result_resize_red)
     cv2.waitKey(0)
     
-# if result_yellow and predict_prob_yellow > 0.2: # and predict_prob_red < predict_prob_yellow:
-#     print("PROB YELLOW PREDICTION: ", predict_prob_yellow)
-#     print("YELLOW PREDICTION: ", predict_yellow)
-#     cv2.imshow("image", result_resize_yellow)
-#     cv2.waitKey(0)
+if result_yellow and predict_prob_yellow > 0.2: # and predict_prob_red < predict_prob_yellow:
+    print("PROB YELLOW PREDICTION: ", predict_prob_yellow)
+    print("YELLOW PREDICTION: ", predict_yellow)
+    cv2.imshow("image", result_resize_yellow)
+    cv2.waitKey(0)
     

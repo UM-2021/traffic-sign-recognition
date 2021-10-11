@@ -22,3 +22,6 @@ pip install -r requirements.txt
 
 6 - run the python script:
 python poc_get_sign.py
+
+TO TRAIN THE MODEL:
+python model_train.py
