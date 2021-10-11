@@ -4,6 +4,7 @@ import os
 import imutils
 import my_classification as train
 from PIL import Image
+from joblib import load
 
 def identify_red(imag):
     # orig = imag.copy()
@@ -281,8 +282,10 @@ def identify_yellow(imag):
             return out_resize, np.max(prob), predict
 
 
-clf_red = train.train_red()
-clf_yellow = train.train_yellow() 
+clf_red = load('red_training.joblib') 
+clf_yellow = load('yellow_training.joblib') 
+print(clf_red)
+print(type(clf_red))
 
 # imag = np.uint8(cv2.imread('./my_test_set/testnico4.png'))
 # imag = np.uint8(cv2.imread('./my_test_set/amarillotest5.png'))
