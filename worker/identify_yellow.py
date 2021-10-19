@@ -36,15 +36,15 @@ def identify(imag):
     # mask to extract yellow
     # lower_yellow = np.array([80, 100, 100])
     # upper_yellow = np.array([100, 255, 255])
-    # lower_yellow = np.array([22, 93, 0])
-    # upper_yellow = np.array([45, 255, 255])
     lower_yellow = np.array([22, 93, 0])
-    upper_yellow = np.array([106, 255, 255])
+    upper_yellow = np.array([45, 255, 255])
+    # lower_yellow = np.array([22, 93, 0])
+    # upper_yellow = np.array([106, 255, 255])
 
     mask = cv2.inRange(img_hsv, lower_yellow, upper_yellow)
 
     yellow_mask = cv2.bitwise_and(img_output, img_output, mask=mask)
-    yellow_mask = yellow_mask[:800, :]
+    # yellow_mask = yellow_mask[:800, :]
 
     # seperate out the channels
     r_channel = yellow_mask[:, :, 2]

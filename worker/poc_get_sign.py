@@ -6,8 +6,9 @@ from joblib import load
 import identify_red
 import identify_yellow 
 
-imag = np.uint8(cv2.imread('./my_test_set/testnico1.png'))
+# imag = np.uint8(cv2.imread('./my_test_set/testnico10.png'))
 # imag = np.uint8(cv2.imread('./my_test_set/amarelo.jpg'))
+imag = np.uint8(cv2.imread('./my_test_set/amarillotest.jpeg'))
 # imag = np.uint8(cv2.imread('./my_test_set/cedapaso.jpg'))
 
 result_red = identify_red.identify(imag)
