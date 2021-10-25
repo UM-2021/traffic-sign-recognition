@@ -20,7 +20,7 @@ async def send_sign(sign):
 
 async def send_detection(sign, coords):
     pload = {'sign': sign, 'coordinates': coords}
-    requests.post('https://179.27.97.57/signs',data = pload)
+    requests.post('https://179.27.97.57/signs/location',data = pload)
 
 async def handle_detection(sign, coords):
     if internet_on():
