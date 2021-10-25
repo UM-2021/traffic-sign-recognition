@@ -5,7 +5,7 @@ class APIFeatures {
     }
 
     filter() {
-        const queryObj = { ...this.queryStr }; // Primero separa todos los campos de req.query (...) y despues crea un nuevo objeto poniendole los corchetes
+        const queryObj = { ...this.queryStr };
         const excludes = ['page', 'sort', 'limit', 'fields'];
         excludes.forEach(el => delete queryObj[el]);
 
