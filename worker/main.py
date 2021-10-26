@@ -21,6 +21,7 @@ def internet_on():
 async def send_sign(sign):
     uri = "ws://localhost:3000"
     async with websockets.connect(uri) as websocket:
+        print(sign)
         await websocket.send(sign)
 
 async def send_detection(sign, coords):
@@ -37,11 +38,12 @@ async def handle_detection(sign, coords):
                 values = line.split(',')
                 if len(values) == 3 and values[0].isnumeric() and values[1].isnumeric() and values[2].isnumeric():
                     await send_sign(line)
-                    await send_detection(values[0], [values[1], values[2]])
+                    #await send_detection(values[0], [values[1], values[2]])
         open('todo_requests.txt', 'w').close()
         if sign.isnumeric() and len(coords) == 2 and coords[0].isnumeric() and coords[1].isnumeric():
+            print("Ready to send sign...", sign)
             await send_sign(sign)
-            await send_detection(sign, coords)
+            #await send_detection(sign, coords)
     else:
         print("No Internet connection")
         with open('todo_requests.txt', 'a') as the_file:
@@ -84,9 +86,12 @@ while True:
             print("RED PREDICTION: ", predict_red)
             # cv2.imshow("image", result_resize_red)
             # cv2.waitKey(0)
-            if predict_red == 'PARE':
+            if predict_red== 'PARE':
                 asyncio.run(handle_detection('1', ['-4' , '-5']))
             if predict_red == 'CEDA EL PASO':
+                print('HERE')
+                asyncio.run(handle_detection('2', ['-4' , '-55']))
+            if predict_red:
                 asyncio.run(handle_detection('2', ['-4' , '-55']))
 
 
