@@ -85,10 +85,8 @@ def identify(imag):
     cnts = cv2.findContours(r_thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     cnts = imutils.grab_contours(cnts)
     max_cnts = 3  # no frame we want to detect more than 3
-    print("HERE RED")
 
     if not cnts == []:
-        print("HERE RED")
         cnts_sorted = sorted(cnts, key=cv2.contourArea, reverse=True)
         if len(cnts_sorted) > max_cnts:
             cnts_sorted = cnts_sorted[:3]
@@ -136,7 +134,7 @@ def identify(imag):
             cnts_list.append(c)
             label_list.append(label)
 
-            cv2.imshow("image", out_resize)
-            cv2.waitKey(0)
+            #cv2.imshow("image", out_resize)
+            #cv2.waitKey(0)
             
             return out_resize, np.max(prob), predict

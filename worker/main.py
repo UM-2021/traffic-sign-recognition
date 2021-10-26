@@ -35,11 +35,11 @@ async def handle_detection(sign, coords):
             lines = [line.rstrip() for line in lines]
             for line in lines:
                 values = line.split(',')
-                if values.len() == 3 and values[0].isnumeric() and values[1].isnumeric() and values[2].isnumeric():
+                if len(values) == 3 and values[0].isnumeric() and values[1].isnumeric() and values[2].isnumeric():
                     await send_sign(line)
                     await send_detection(values[0], [values[1], values[2]])
         open('todo_requests.txt', 'w').close()
-        if sign.isnumeric() and coords.len() == 2 and coords[0].isnumeric() and coords[1].isnumeric():
+        if sign.isnumeric() and len(coords) == 2 and coords[0].isnumeric() and coords[1].isnumeric():
             await send_sign(sign)
             await send_detection(sign, coords)
     else:
@@ -77,17 +77,17 @@ while True:
             result_resize_red = result_red[0]
             predict_prob_red= result_red[1]
             predict_red= result_red[2]
-        print("\n\nRESULTS:")
+        #print("\n\nRESULTS:")
 
-        if result_red and predict_prob_red > 0.5: # and predict_prob_red > predict_prob_yellow:
+        if result_red and predict_prob_red > 0.6: # and predict_prob_red > predict_prob_yellow:
             print("PROB RED PREDICTION: ", predict_prob_red)
             print("RED PREDICTION: ", predict_red)
             # cv2.imshow("image", result_resize_red)
             # cv2.waitKey(0)
             if predict_red == 'PARE':
-                asyncio.run(handle_detection('1', -4 , -55))
+                asyncio.run(handle_detection('1', ['-4' , '-5']))
             if predict_red == 'CEDA EL PASO':
-                asyncio.run(handle_detection('2', -4 , -55))
+                asyncio.run(handle_detection('2', ['-4' , '-55']))
 
 
 
