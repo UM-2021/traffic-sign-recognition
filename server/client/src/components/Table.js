@@ -168,7 +168,7 @@ export default function EnhancedTable() {
     };
 
     // Geocoder
-    Geocode.setApiKey('AIzaSyDJjCqRGlYoBuRNu-8BjFcet6qj5oEdxEk');
+    Geocode.setApiKey(process.env.REACT_APP_GOOGLE_API_KEY);
     Geocode.setLanguage('es');
     Geocode.setRegion('es');
     Geocode.setLocationType('ROOFTOP');
