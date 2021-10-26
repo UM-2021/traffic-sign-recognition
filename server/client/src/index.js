@@ -1,12 +1,35 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import reportWebVitals from './reportWebVitals';
-import Dashboard from './components/Dashboard';
+import Dashboard from './pages/Dashboard';
+import Layout from './components/Layout';
+import Signals from './pages/Signals';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import Box from '@mui/material/Box';
+
+const mdTheme = createTheme({
+  typography: {
+    fontFamily: ['Poppins'],
+  },
+});
 
 ReactDOM.render(
-  <React.StrictMode>
-    <Dashboard />
-  </React.StrictMode>,
+  <Router>
+    <ThemeProvider theme={mdTheme}>
+      <Box sx={{ display: 'flex' }}>
+        <CssBaseline />
+        <Layout>
+          <Switch>
+            <Route exact path="/" component={Dashboard} />
+            <Route exact path="/signs" component={Signals} />
+          </Switch>
+        </Layout>
+      </Box>
+    </ThemeProvider>
+  </Router>,
+
   document.getElementById('root')
 );
 

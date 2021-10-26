@@ -158,7 +158,7 @@ export default function EnhancedTable() {
   React.useEffect(() => {
     const fetchSigns = async () => {
       setLoading(true);
-      const res = await axios('http://localhost:3000/signs/locations');
+      const res = await axios(`http://${process.env.REACT_APP_IP_ADDRESS}:3000/signs/locations`);
       let signs = res.data.data.data;
       for (const sign of signs) {
         sign.address = await getAddressFromCoordinates(sign.location.coordinates);

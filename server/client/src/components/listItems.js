@@ -7,22 +7,23 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import WarningIcon from '@mui/icons-material/Warning';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { Link } from 'react-router-dom';
 
 export const mainListItems = (
   <div>
-    <ListItem button>
+    <ListItem component={Link} to="/" button>
       <ListItemIcon>
         <DashboardIcon />
       </ListItemIcon>
       <ListItemText primary="Dashboard" />
     </ListItem>
-    <ListItem button>
+    <ListItem component={Link} to="/signs" button>
       <ListItemIcon>
         <WarningIcon />
       </ListItemIcon>
       <ListItemText primary="Señales" />
     </ListItem>
-    <ListItem button>
+    <ListItem component={Link} to="/me" button>
       <ListItemIcon>
         <AccountCircleIcon />
       </ListItemIcon>
