@@ -10,7 +10,7 @@ async def send_sign():
         sign = "2"
         await websocket.send(sign)
 
-# asyncio.run(send_sign())
+asyncio.run(send_sign())
 
 
 
@@ -20,4 +20,4 @@ def internet_on():
         return True
     except:
         return False
-print (internet_on())
+#print (internet_on())
