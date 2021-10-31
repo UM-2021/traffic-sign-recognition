@@ -7,6 +7,7 @@ import CardWithNumber from '../components/CardWithNumber';
 import SignTable from '../components/Table';
 import axios from 'axios';
 import Loader from '../components/Loader';
+import Layout from '../components/Layout';
 
 function DashboardContent() {
   const [totalSigns, setTotalSigns] = React.useState(0);
@@ -23,44 +24,46 @@ function DashboardContent() {
   }, []);
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      <Grid container spacing={3}>
-        {/* Chart */}
-        <Grid item xs={12} md={8} lg={9}>
-          <Paper
-            sx={{
-              p: 2,
-              display: 'flex',
-              flexDirection: 'column',
-              height: 240,
-            }}
-          >
-            <Chart />
-          </Paper>
+    <Layout>
+      <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+        <Grid container spacing={3}>
+          {/* Chart */}
+          <Grid item xs={12} md={8} lg={9}>
+            <Paper
+              sx={{
+                p: 2,
+                display: 'flex',
+                flexDirection: 'column',
+                height: 240,
+              }}
+            >
+              <Chart />
+            </Paper>
+          </Grid>
+          <Grid item xs={12} md={4} lg={3}>
+            <Paper
+              sx={{
+                p: 2,
+                display: 'flex',
+                flexDirection: 'column',
+                height: 240,
+              }}
+            >
+              {loading ? (
+                <Loader />
+              ) : (
+                <CardWithNumber number={totalSigns} title="Señales detectadas" />
+              )}
+            </Paper>
+          </Grid>
+          <Grid item xs={12}>
+            <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
+              <SignTable />
+            </Paper>
+          </Grid>
         </Grid>
-        <Grid item xs={12} md={4} lg={3}>
-          <Paper
-            sx={{
-              p: 2,
-              display: 'flex',
-              flexDirection: 'column',
-              height: 240,
-            }}
-          >
-            {loading ? (
-              <Loader />
-            ) : (
-              <CardWithNumber number={totalSigns} title="Señales detectadas" />
-            )}
-          </Paper>
-        </Grid>
-        <Grid item xs={12}>
-          <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-            <SignTable />
-          </Paper>
-        </Grid>
-      </Grid>
-    </Container>
+      </Container>
+    </Layout>
   );
 }
 

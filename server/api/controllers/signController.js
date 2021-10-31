@@ -9,10 +9,10 @@ exports.createSign = catchAsync(async (req, res, next) => {
   const newSign = await Sign.create(req.body);
 
   res.status(201).json({
-      status: 'success',
-      data: {
-          data: newSign
-      }
+    status: 'success',
+    data: {
+      data: newSign,
+    },
   });
 });
 
@@ -35,9 +35,14 @@ exports.createSignLocation = catchAsync(async (req, res, next) => {
   const lat = sign.coordinates[1];
 
   const radius = distance / EARTH_RADIUS_KM;
-  const nearSigns = await SignLocation.find({
+  let nearSigns = await SignLocation.find({
     location: { $geoWithin: { $centerSphere: [[lng, lat], radius] } },
+  }).populate({
+    path: 'sign',
+    match: { sign: Number(sign.sign) },
   });
+
+  nearSigns = nearSigns.filter((loc) => loc.sign != null);
 
   let signLocation = null;
   if (nearSigns.length > 0) {
@@ -131,4 +136,85 @@ exports.getSign = catchAsync(async (req, res, next) => {
   });
 });
 
-// exports.getSignsCountByType
+exports.getSignsCountByType = catchAsync(async (req, res, next) => {
+  const signs = await SignRecord.aggregate([
+    {
+      $lookup: {
+        from: 'signlocations',
+        localField: 'signLocation',
+        foreignField: '_id',
+        as: 'sign',
+      },
+    },
+    {
+      $unwind: {
+        path: '$sign',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'signs',
+        localField: 'sign.sign',
+        foreignField: '_id',
+        as: 'sign.type',
+      },
+    },
+    {
+      $group: {
+        _id: '$sign.type.sign',
+        count: { $sum: 1 },
+        name: { $first: '$sign.type.name' },
+        photo: { $first: '$sign.type.photo' },
+      },
+    },
+    {
+      $project: {
+        sign: { $arrayElemAt: ['$_id', 0] },
+        name: { $arrayElemAt: ['$name', 0] },
+        photo: { $arrayElemAt: ['$photo', 0] },
+        count: 1,
+        _id: 0,
+      },
+    },
+  ]);
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      data: signs,
+    },
+  });
+});
+
+exports.getSignsCountByDate = catchAsync(async (req, res, next) => {
+  const signs = await SignRecord.aggregate([
+    {
+      $match: {
+        identifiedAt: {
+          $gte: new Date(new Date().getTime() - 10 * 24 * 60 * 60 * 1000),
+        },
+      },
+    },
+    {
+      $group: {
+        _id: { $dateToString: { format: '%Y-%m-%d', date: '$identifiedAt' } },
+        count: { $sum: 1 },
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        date: '$_id',
+        count: 1,
+      },
+    },
+  ]);
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      data: signs,
+    },
+  });
+});

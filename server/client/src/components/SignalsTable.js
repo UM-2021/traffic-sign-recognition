@@ -13,7 +13,6 @@ import { visuallyHidden } from '@mui/utils';
 import Title from './Title';
 import { Avatar } from '@mui/material';
 import axios from 'axios';
-import Geocode from 'react-geocode';
 import Loader from './Loader';
 
 function descendingComparator(a, b, orderBy) {
@@ -58,12 +57,6 @@ const headCells = [
     numeric: false,
     disablePadding: false,
     label: 'Nombre',
-  },
-  {
-    id: 'address',
-    numeric: false,
-    disablePadding: true,
-    label: 'Dirección',
   },
   {
     id: 'count',
@@ -115,7 +108,7 @@ EnhancedTableHead.propTypes = {
   orderBy: PropTypes.string.isRequired,
 };
 
-export default function EnhancedTable() {
+export default function SignalsTable() {
   const [rows, setRows] = React.useState([]);
   const [order, setOrder] = React.useState('desc');
   const [orderBy, setOrderBy] = React.useState('count');
@@ -123,32 +116,14 @@ export default function EnhancedTable() {
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [loading, setLoading] = React.useState(false);
 
-  const getAddressFromCoordinates = async (coord) => {
-    try {
-      const addr = await Geocode.fromLatLng(coord[0], coord[1]);
-      return addr.results[0].formatted_address;
-    } catch (error) {
-      return `[${coord[0]}, ${coord[1]}]`;
-    }
-  };
-
   React.useEffect(() => {
     const fetchSigns = async () => {
       setLoading(true);
-      const res = await axios(`http://${process.env.REACT_APP_IP_ADDRESS}:3000/signs/locations`);
+      const res = await axios(`http://${process.env.REACT_APP_IP_ADDRESS}:3000/signs/type`);
       let signs = res.data.data.data;
-      for (const sign of signs) {
-        sign.address = await getAddressFromCoordinates(sign.location.coordinates);
-      }
       setRows(signs);
       setLoading(false);
     };
-
-    // Geocoder
-    Geocode.setApiKey(process.env.REACT_APP_GOOGLE_API_KEY);
-    Geocode.setLanguage('es');
-    Geocode.setRegion('es');
-    Geocode.setLocationType('ROOFTOP');
 
     fetchSigns();
   }, []);
@@ -200,16 +175,15 @@ export default function EnhancedTable() {
                     return (
                       <TableRow
                         hover
-                        onClick={(event) => handleClick(event, row.sign.name)}
+                        onClick={(event) => handleClick(event, row.name)}
                         key={row._id}
                       >
                         <TableCell>
-                          <Avatar variant="square" alt="Stop" src={`images/${row.sign.sign}.png`} />
+                          <Avatar variant="square" alt="Stop" src={`images/${row.sign}.png`} />
                         </TableCell>
                         <TableCell component="th" id={labelId} scope="row">
-                          {row.sign.name}
+                          {row.name}
                         </TableCell>
-                        <TableCell padding="none">{row.address}</TableCell>
                         <TableCell align="right">{row.count}</TableCell>
                       </TableRow>
                     );
