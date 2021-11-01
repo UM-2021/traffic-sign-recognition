@@ -12,8 +12,8 @@ import TableSortLabel from '@mui/material/TableSortLabel';
 import { visuallyHidden } from '@mui/utils';
 import Title from './Title';
 import { Avatar } from '@mui/material';
-import axios from 'axios';
 import Loader from './Loader';
+import instance from '../utils/axiosConfig';
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -119,7 +119,8 @@ export default function SignalsTable() {
   React.useEffect(() => {
     const fetchSigns = async () => {
       setLoading(true);
-      const res = await axios(`http://${process.env.REACT_APP_IP_ADDRESS}:3000/signs/type`);
+      const res = await instance('/api/signs/type');
+      console.log(res);
       let signs = res.data.data.data;
       setRows(signs);
       setLoading(false);
@@ -176,7 +177,7 @@ export default function SignalsTable() {
                       <TableRow
                         hover
                         onClick={(event) => handleClick(event, row.name)}
-                        key={row._id}
+                        key={row.sign}
                       >
                         <TableCell>
                           <Avatar variant="square" alt="Stop" src={`images/${row.sign}.png`} />
@@ -201,6 +202,7 @@ export default function SignalsTable() {
             </Table>
           </TableContainer>
           <TablePagination
+            labelRowsPerPage="Señales por página:"
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
             count={rows.length}

@@ -5,9 +5,9 @@ import Paper from '@mui/material/Paper';
 import Chart from '../components/Chart';
 import CardWithNumber from '../components/CardWithNumber';
 import SignTable from '../components/Table';
-import axios from 'axios';
 import Loader from '../components/Loader';
 import Layout from '../components/Layout';
+import instance from '../utils/axiosConfig';
 
 function DashboardContent() {
   const [totalSigns, setTotalSigns] = React.useState(0);
@@ -16,7 +16,11 @@ function DashboardContent() {
   React.useEffect(() => {
     const fetchSigns = async () => {
       setLoading(true);
-      const signs = await axios(`http://${process.env.REACT_APP_IP_ADDRESS}:3000/signs/locations`);
+      // When converting to ISO format, timezone offset is ignored.
+      const tzoffset = new Date().getTimezoneOffset() * 60000;
+      const today = new Date(Date.now() - tzoffset);
+      const todayStr = today.toISOString().split('T')[0];
+      const signs = await instance(`/api/signs/records?identifiedAt[gte]=${todayStr}`);
       setTotalSigns(signs.data.results);
       setLoading(false);
     };
@@ -52,7 +56,7 @@ function DashboardContent() {
               {loading ? (
                 <Loader />
               ) : (
-                <CardWithNumber number={totalSigns} title="Señales detectadas" />
+                <CardWithNumber number={totalSigns} title="Señales reconocidas" />
               )}
             </Paper>
           </Grid>

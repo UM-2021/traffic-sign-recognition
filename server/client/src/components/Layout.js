@@ -18,6 +18,8 @@ import { Box, styled } from '@mui/system';
 import MuiAppBar from '@mui/material/AppBar';
 import MuiDrawer from '@mui/material/Drawer';
 import { mainListItems, secondaryListItems } from './listItems';
+import { useHistory } from 'react-router';
+import { useAuth } from '../hooks/useAuth';
 
 function Copyright(props) {
   return (
@@ -79,9 +81,17 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 );
 
 const Layout = ({ children }) => {
+  const history = useHistory();
   const [open, setOpen] = React.useState(true);
+  const { logout } = useAuth();
+
   const toggleDrawer = () => {
     setOpen(!open);
+  };
+
+  const logoutHandler = async () => {
+    await logout();
+    history.replace('/signin');
   };
 
   return (
@@ -135,7 +145,7 @@ const Layout = ({ children }) => {
             <ListItemIcon>
               <LogoutIcon />
             </ListItemIcon>
-            <ListItemText primary="Cerrar Sesión" />
+            <ListItemText primary="Cerrar Sesión" onClick={() => logoutHandler()} />
           </ListItem>
         </div>
       </Drawer>

@@ -12,9 +12,9 @@ import TableSortLabel from '@mui/material/TableSortLabel';
 import { visuallyHidden } from '@mui/utils';
 import Title from './Title';
 import { Avatar } from '@mui/material';
-import axios from 'axios';
 import Geocode from 'react-geocode';
 import Loader from './Loader';
+import instance from '../utils/axiosConfig';
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -135,7 +135,7 @@ export default function EnhancedTable() {
   React.useEffect(() => {
     const fetchSigns = async () => {
       setLoading(true);
-      const res = await axios(`http://${process.env.REACT_APP_IP_ADDRESS}:3000/signs/locations`);
+      const res = await instance('/api/signs/locations');
       let signs = res.data.data.data;
       for (const sign of signs) {
         sign.address = await getAddressFromCoordinates(sign.location.coordinates);
@@ -227,6 +227,7 @@ export default function EnhancedTable() {
             </Table>
           </TableContainer>
           <TablePagination
+            labelRowsPerPage="Señales por página:"
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
             count={rows.length}

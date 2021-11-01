@@ -3,7 +3,7 @@ import { useTheme } from '@mui/material/styles';
 import { LineChart, Line, XAxis, YAxis, Label, ResponsiveContainer } from 'recharts';
 import Title from './Title';
 import Loader from './Loader';
-import axios from 'axios';
+import instance from '../utils/axiosConfig';
 
 // Generate Sales Data
 // function createData(time, amount) {
@@ -35,7 +35,7 @@ export default function Chart() {
     const fetchSigns = async () => {
       setLoading(true);
 
-      const res = await axios(`http://${process.env.REACT_APP_IP_ADDRESS}:3000/signs/records/date`);
+      const res = await instance('/api/signs/records/date');
       let signs = res.data.data.data;
       signs = signs.map((s) => ({ ...s, date: new Date(s.date) }));
 
@@ -46,12 +46,11 @@ export default function Chart() {
       if (signsLength < 10) {
         for (let i = 1; i <= 10 - signsLength; i++) {
           const newDate = date.setDate(date.getDate() - 1);
-          console.log(newDate);
           signs.push({ date: new Date(newDate), count: 0 });
         }
       }
 
-      signs.sort((a,b) => (a.date > b.date) ? 1 : ((b.date > a.date) ? -1 : 0))
+      signs.sort((a, b) => (a.date > b.date ? 1 : b.date > a.date ? -1 : 0));
 
       setData(signs);
       setLoading(false);
