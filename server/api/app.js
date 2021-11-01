@@ -24,8 +24,8 @@ app.options('*', cors());
 
 app.use(helmet());
 
-app.use('/signs', signsRouter);
-app.use('/users', usersRouter);
+app.use('/api/signs', signsRouter);
+app.use('/api/users', usersRouter);
 
 // catch 404 and forward to error handler
 app.all('*', (req, res, next) => {
