@@ -9,12 +9,18 @@ export default function CardWithNumber(props) {
   return (
     <React.Fragment>
       <Title>{props.title}</Title>
-      <Box sx={{ flex: 1, marginTop: '10px'}}>
-        <Typography component="p" variant="h2" >
+      <Box sx={{ flex: 1, marginTop: '10px' }}>
+        <Typography component="p" variant="h2">
           {props.number}
         </Typography>
-        <Typography color="text.secondary" >
-          on {date.toDateString()}
+        <Typography color="text.secondary">
+          hoy, {' '}
+          {date.toLocaleDateString('es-ES', {
+            weekday: 'short',
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+          })}
         </Typography>
       </Box>
     </React.Fragment>
