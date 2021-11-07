@@ -10,6 +10,11 @@ import websockets
 import requests
 import urllib.request
 
+import gpscoordenadas
+import serial
+import time
+import string
+import pynmea2
 
 def internet_on():
     try:
@@ -22,12 +27,12 @@ def internet_on():
 async def send_sign(sign):
     uri = "ws://localhost:3000"
     async with websockets.connect(uri) as websocket:
-        print(sign)
+        # print(sign)
         await websocket.send(sign)
 
 async def send_detection(sign, coords):
     pload = {'sign': sign, 'coordinates': coords}
-    requests.post('https://179.27.97.57/signs',data = pload)
+    requests.post('https://179.27.97.57/signs/locations',data = pload)
 
 async def handle_detection(sign, coords):
     if internet_on():
@@ -41,7 +46,7 @@ async def handle_detection(sign, coords):
                     await send_sign(line)
                     #await send_detection(values[0], [values[1], values[2]])
         open('todo_requests.txt', 'w').close()
-        if sign.isnumeric() and len(coords) == 2 and coords[0].isnumeric() and coords[1].isnumeric():
+        if sign.isnumeric():
             print("Ready to send sign...", sign)
             await send_sign(sign)
             #await send_detection(sign, coords)
@@ -51,7 +56,7 @@ async def handle_detection(sign, coords):
             the_file.write(sign + ','+ coords[0] + ',' + coords[1] + '\n')
 
 # Time (seconds) to wait to extract the frames
-TIME_WINDOW = 1
+TIME_WINDOW = 3
 
 # Craetes a directory to store frames, relative to the script path. 
 cwd = os.path.dirname(os.path.realpath(__file__))
@@ -87,13 +92,22 @@ while True:
             print("RED PREDICTION: ", predict_red)
             # cv2.imshow("image", result_resize_red)
             # cv2.waitKey(0)
-            if predict_red== 'PARE':
-                asyncio.run(handle_detection('1', ['-4' , '-5']))
+            if predict_red == 'PARE':
+                lat, lng = gpscoordenadas.getCoords()
+                print(lat,lng)
+                asyncio.run(handle_detection('1', [lat, lng]))
             if predict_red == 'CEDA EL PASO':
-                print('HERE')
-                asyncio.run(handle_detection('2', ['-4' , '-55']))
+                lat, lng = gpscoordenadas.getCoords()
+                print(lat,lng)
+                asyncio.run(handle_detection('2', [lat, lng]))
+            if predict_red == 'SEÑAL DE VELOCIDAD DE 60 km/h':
+                lat, lng = gpscoordenadas.getCoords()
+                print(lat,lng)
+                asyncio.run(handle_detection('2', [lat, lng]))
             if predict_red:
-                asyncio.run(handle_detection('2', ['-4' , '-55']))
+                lat, lng = gpscoordenadas.getCoords()
+                print(lat,lng)
+                asyncio.run(handle_detection('2', [lat, lng]))
 
 
 
