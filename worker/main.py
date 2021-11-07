@@ -7,8 +7,9 @@ import identify_red
 import time
 import asyncio
 import websockets
-import urllib.request
 import requests
+import urllib.request
+
 
 def internet_on():
     try:
