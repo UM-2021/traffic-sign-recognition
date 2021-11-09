@@ -16,6 +16,7 @@
 			signName.innerHTML = data.name;
 			audio.src = data.audio;
 			console.log(img.src)
+			img.style="opacity: 1;"
 			setTimeout(async () => {
 				if (img.src == window.location.href.slice(0, -1) + data.image){
 					await fadeOut(img);
@@ -30,6 +31,8 @@
 			signName2.innerHTML = signName.innerHTML;
 			signName.innerHTML = data.name;
 			audio.src = data.audio;
+			img.style="opacity: 1;"
+			img2.style="opacity: 1;"
 			setTimeout(async () => {
 				await fadeOut(img2);
 				await fadeOut(img);
@@ -48,13 +51,13 @@
 			img.src = '';
 			signName.innerHTML = '';
 			audio.src = '';
-			img.style="opacity: 1;"
+			img.style="opacity: 0;"
 		}
 		
 		function removeJustImageAndSignName(img, signName) {
 			img.src = '';
 			signName.innerHTML = '';
-			img.style="opacity: 1;"
+			img.style="opacity: 0;"
 		}
 
 		function fadeOut(ele) {
