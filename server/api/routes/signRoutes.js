@@ -4,8 +4,8 @@ const router = express.Router();
 const signController = require('../controllers/signController');
 const authController = require('../controllers/authController');
 
-router.post('/', signController.createSign);
-router.post('/locations', signController.createSignLocation);
+router.post('/', authController.protect, signController.createSign);
+router.post('/locations', authController.protect, signController.createSignLocation);
 
 router.get('/', authController.protect, signController.getSigns);
 router.get('/locations', authController.protect, signController.getSignsLocation);

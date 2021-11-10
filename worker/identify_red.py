@@ -18,7 +18,7 @@ def identify(imag):
 
     img = imag.copy()
 
-    # img2 = imag.copy()[:500, :]  # red signs are only on the above few rows
+    #img = imag.copy()[:500, :]  # red signs are only on the above few rows
     img_yuv = cv2.cvtColor(img, cv2.COLOR_BGR2YUV)
 
     # cv2.imshow("img_yuv", img_yuv)
@@ -93,14 +93,14 @@ def identify(imag):
 
         for c in cnts_sorted:
             x, y, w, h = cv2.boundingRect(c)
-            # if x < 800:
-            #     continue
-            # aspect_ratio_1 = w / h
-            # aspect_ratio_2 = h / w
-            # if aspect_ratio_1 <= 0.3 or aspect_ratio_1 > 1.2:
-            #     continue
-            # if aspect_ratio_2 <= 0.3:
-            #     continue
+            if x < 800:
+                continue
+            aspect_ratio_1 = w / h
+            aspect_ratio_2 = h / w
+            if aspect_ratio_1 <= 0.3 or aspect_ratio_1 > 1.2:
+                continue
+            if aspect_ratio_2 <= 0.3:
+                continue
             hull = cv2.convexHull(c)
             cv2.drawContours(imag, [hull], -1, (0, 255, 0), 1)
 

@@ -43,4 +43,4 @@ async def handle_detection(sign, coords):
             the_file.write(sign + ','+ coords[0] + ',' + coords[1] + '\n')
 
 
-asyncio.run(handle_detection('2', -4 , -55))
+asyncio.run(handle_detection('2', -4 , -55)) 

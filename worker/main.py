@@ -15,6 +15,7 @@ import serial
 import time
 import string
 import pynmea2
+from requests.structures import CaseInsensitiveDict
 
 def internet_on():
     try:
@@ -31,8 +32,14 @@ async def send_sign(sign):
         await websocket.send(sign)
 
 async def send_detection(sign, coords):
+    token="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxN2UxYjQ2YjNkY2U4YTFlMjE1NDRlMiIsImlhdCI6MTYzNjM5OTQyNCwiZXhwIjoxNjQ0MTc1NDI0fQ.gsff9f7Vh6Ff1OFchK-Gp-2zXbhj1cN-OAsyip1353Y"
+    headers = CaseInsensitiveDict()
+    headers["Accept"] = "application/json"
+    headers["Authorization"] = "Bearer {token}"
     pload = {'sign': sign, 'coordinates': coords}
-    requests.post('https://179.27.97.57/signs/locations',data = pload)
+    resp = requests.post('https://179.27.97.57/signs/locations:3000',data = pload, headers=headers)
+    print(resp.status_code)
+
 
 async def handle_detection(sign, coords):
     if internet_on():
@@ -44,19 +51,19 @@ async def handle_detection(sign, coords):
                 values = line.split(',')
                 if len(values) == 3 and values[0].isnumeric() and values[1].isnumeric() and values[2].isnumeric():
                     await send_sign(line)
-                    #await send_detection(values[0], [values[1], values[2]])
+                    await send_detection(values[0], [values[1], values[2]])
         open('todo_requests.txt', 'w').close()
         if sign.isnumeric():
             print("Ready to send sign...", sign)
             await send_sign(sign)
-            #await send_detection(sign, coords)
+            await send_detection(sign, coords)
     else:
         print("No Internet connection")
         with open('todo_requests.txt', 'a') as the_file:
             the_file.write(sign + ','+ coords[0] + ',' + coords[1] + '\n')
 
 # Time (seconds) to wait to extract the frames
-TIME_WINDOW = 3
+TIME_WINDOW = 1
 
 # Craetes a directory to store frames, relative to the script path. 
 cwd = os.path.dirname(os.path.realpath(__file__))
@@ -85,7 +92,7 @@ while True:
             result_resize_red = result_red[0]
             predict_prob_red= result_red[1]
             predict_red= result_red[2]
-        #print("\n\nRESULTS:")
+        print("\n\nRESULTS:")
 
         if result_red and predict_prob_red > 0.6: # and predict_prob_red > predict_prob_yellow:
             print("PROB RED PREDICTION: ", predict_prob_red)
@@ -94,19 +101,19 @@ while True:
             # cv2.waitKey(0)
             if predict_red == 'PARE':
                 lat, lng = gpscoordenadas.getCoords()
-                print(lat,lng)
+                # print(lat,lng)
                 asyncio.run(handle_detection('1', [lat, lng]))
             if predict_red == 'CEDA EL PASO':
                 lat, lng = gpscoordenadas.getCoords()
-                print(lat,lng)
+                # print(lat,lng)
                 asyncio.run(handle_detection('2', [lat, lng]))
             if predict_red == 'SEÑAL DE VELOCIDAD DE 60 km/h':
                 lat, lng = gpscoordenadas.getCoords()
-                print(lat,lng)
+                # print(lat,lng)
                 asyncio.run(handle_detection('2', [lat, lng]))
             if predict_red:
                 lat, lng = gpscoordenadas.getCoords()
-                print(lat,lng)
+                # print(lat,lng)
                 asyncio.run(handle_detection('2', [lat, lng]))
 
 
