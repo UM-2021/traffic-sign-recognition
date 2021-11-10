@@ -9,14 +9,6 @@ const signSchema = new Schema({
   name: {
     type: String,
     required: [true, 'A sign must have a name.']
-  },
-  photo: {
-    type: String,
-    required: [true, 'A sign must have a photo path.']
-  },
-  audio: {
-    type: String,
-    required: [true, 'A sign must have a audio path.']
   }
 });
 
