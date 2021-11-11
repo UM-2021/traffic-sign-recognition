@@ -1,13 +1,11 @@
 import cv2 
 import numpy as np
-import os
 import my_classification as train
 import imutils
-from PIL import Image
 from joblib import load
 
 def identify(imag):
-    clf_red = load('red_training.joblib') 
+    clf_red = load('./trained_models/red_training.joblib') 
 
     # orig = imag.copy()
     # imag_red = imag.copy()
@@ -93,14 +91,15 @@ def identify(imag):
 
         for c in cnts_sorted:
             x, y, w, h = cv2.boundingRect(c)
-            if x < 800:
-                continue
-            aspect_ratio_1 = w / h
-            aspect_ratio_2 = h / w
-            if aspect_ratio_1 <= 0.3 or aspect_ratio_1 > 1.2:
-                continue
-            if aspect_ratio_2 <= 0.3:
-                continue
+            print("BOUNDING", x, y, w, h)
+            # if x < 800:
+            #     continue
+            # aspect_ratio_1 = w / h
+            # aspect_ratio_2 = h / w
+            # if aspect_ratio_1 <= 0.3 or aspect_ratio_1 > 1.2:
+            #     continue
+            # if aspect_ratio_2 <= 0.3:
+            #     continue
             hull = cv2.convexHull(c)
             cv2.drawContours(imag, [hull], -1, (0, 255, 0), 1)
 
@@ -122,8 +121,8 @@ def identify(imag):
 
             # PREDICTION
             predict, prob = train.test_red(clf_red, out_resize)
-            print(np.max(prob))
-            print(predict)
+            # print(np.max(prob))
+            # print(predict)
             # if np.max(prob) < 0.78:
             #     continue
             cv2.rectangle(imag, (x, y), (int(x + w), int(y + h)), (0, 255, 0), 2)
