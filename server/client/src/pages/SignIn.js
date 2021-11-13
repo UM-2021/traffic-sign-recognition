@@ -48,7 +48,7 @@ export default function SignIn() {
     setLoading(true);
     const res = await login(email, password);
 
-    if (res.data.status === 'success') history.replace('/');
+    if (res.data.status === 'success') return history.replace('/');
     else setSnackBar({ open: true, message: res.data.message });
 
     setLoading(false);

@@ -1,6 +1,9 @@
 import React, { useState, createContext, useContext } from 'react';
 import instance from '../utils/axiosConfig';
 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
@@ -14,6 +17,9 @@ export const AuthProvider = ({ children }) => {
         password,
       });
       sessionStorage.setItem('loggedIn', 'true');
+      localStorage.setItem('token', res.data.token);
+      await sleep(1000);
+      
       setAuthed(true);
       return res;
     } catch (e) {
@@ -26,6 +32,7 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     await instance('/api/users/logout');
     sessionStorage.setItem('loggedIn', 'false');
+    localStorage.clear();
     setAuthed(false);
   };
 
