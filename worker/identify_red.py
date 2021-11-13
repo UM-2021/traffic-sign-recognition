@@ -1,13 +1,11 @@
 import cv2 
 import numpy as np
-import os
 import my_classification as train
 import imutils
-from PIL import Image
 from joblib import load
 
 def identify(imag):
-    clf_red = load('red_training.joblib') 
+    clf_red = load('./trained_models/red_training.joblib') 
 
     # orig = imag.copy()
     # imag_red = imag.copy()
@@ -18,7 +16,7 @@ def identify(imag):
 
     img = imag.copy()
 
-    # img2 = imag.copy()[:500, :]  # red signs are only on the above few rows
+    #img = imag.copy()[:500, :]  # red signs are only on the above few rows
     img_yuv = cv2.cvtColor(img, cv2.COLOR_BGR2YUV)
 
     # cv2.imshow("img_yuv", img_yuv)
@@ -93,6 +91,7 @@ def identify(imag):
 
         for c in cnts_sorted:
             x, y, w, h = cv2.boundingRect(c)
+            # print("BOUNDING", x, y, w, h)
             # if x < 800:
             #     continue
             # aspect_ratio_1 = w / h
@@ -122,8 +121,8 @@ def identify(imag):
 
             # PREDICTION
             predict, prob = train.test_red(clf_red, out_resize)
-            print(np.max(prob))
-            print(predict)
+            # print(np.max(prob))
+            # print(predict)
             # if np.max(prob) < 0.78:
             #     continue
             cv2.rectangle(imag, (x, y), (int(x + w), int(y + h)), (0, 255, 0), 2)

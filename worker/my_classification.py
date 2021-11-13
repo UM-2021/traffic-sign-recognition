@@ -2,19 +2,17 @@ import cv2
 import numpy as np
 import os
 from PIL import Image
-from skimage import feature, exposure
+from skimage import feature
 from sklearn import svm
 
 
 def train_red():
-    folder_train_red = [["my_train_set/red_signs/ceda-el-paso-signal", "CEDA EL PASO"], ["my_train_set/red_signs/no-sobrepasar", "NO SOBREPASAR"], ["my_train_set/red_signs/pare-signal", "PARE"],
-                        ["my_train_set/red_signs/velocidad-signal/45km", "SEÑAL DE VELOCIDAD 45 km/h"], ["my_train_set/red_signs/velocidad-signal/60km", "SEÑAL DE VELOCIDAD 60 km/h"], 
-                        ["my_train_set/red_signs/velocidad-signal/90km", "SEÑAL DE VELOCIDAD 90 km/h"],["my_train_set/red_signs/velocidad-signal/110km", "SEÑAL DE VELOCIDAD 110 km/h"] ]
+    folder_train_red = [["data/my_train_set/red_signs/ceda-el-paso-signal", "CEDA EL PASO"], ["data/my_train_set/red_signs/no-sobrepasar", "NO SOBREPASAR"], ["data/my_train_set/red_signs/pare-signal", "PARE"],
+                        ["data/my_train_set/red_signs/velocidad-signal/45km", "SEÑAL DE VELOCIDAD 45 km/h"], ["data/my_train_set/red_signs/velocidad-signal/60km", "SEÑAL DE VELOCIDAD 60 km/h"], 
+                        ["data/my_train_set/red_signs/velocidad-signal/90km", "SEÑAL DE VELOCIDAD 90 km/h"],["data/my_train_set/red_signs/velocidad-signal/110km", "SEÑAL DE VELOCIDAD 110 km/h"],
+                        ["data/my_train_set/red_signs/cierre-carril", "CIERRE CARRIL"], ["data/my_train_set/red_signs/contramano", "CONTRAMANO"], 
+                        ["data/my_train_set/red_signs/cuidado-bicicletas", "CUIDADO BICICLETAS"], ["data/my_train_set/red_signs/terreno-resbaladizo", "TERRENO RESBALADIZO"] ]
                     
-    # folder_train_red = [["my_train_set/red_signs/ceda-el-paso-signal", "CEDA EL PASO"], ["my_train_set/red_signs/no-sobrepasar", "NO SOBREPASAR"], ["my_train_set/red_signs/pare-signal", "PARE"],
-    #                     ["my_train_set/red_signs/velocidad-signal/45km", "SEÑAL DE VELOCIDAD 45 km/h"], 
-    #                     ["my_train_set/red_signs/velocidad-signal/90km", "SEÑAL DE VELOCIDAD 90 km/h"],["my_train_set/red_signs/velocidad-signal/110km", "SEÑAL DE VELOCIDAD 110 km/h"] ]
-
     hog_list_red = list()
     label_list_red = list()
     count_red = 0
