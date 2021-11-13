@@ -117,10 +117,42 @@ while True:
                     lat, lng = gpscoordenadas.getCoords()
                     # print(lat,lng)
                     asyncio.run(handle_detection('2', [lat, lng]))
+                if predict_red == 'SEÑAL DE VELOCIDAD DE 30 km/h':
+                    lat, lng = gpscoordenadas.getCoords()
+                    # print(lat,lng)
+                    asyncio.run(handle_detection('1', [lat, lng]))
                 if predict_red == 'SEÑAL DE VELOCIDAD DE 60 km/h':
                     lat, lng = gpscoordenadas.getCoords()
                     # print(lat,lng)
-                    asyncio.run(handle_detection('2', [lat, lng]))
+                    asyncio.run(handle_detection('3', [lat, lng]))
+                if predict_red == 'SEÑAL DE VELOCIDAD DE 90 km/h':
+                    lat, lng = gpscoordenadas.getCoords()
+                    # print(lat,lng)
+                    asyncio.run(handle_detection('6', [lat, lng]))
+                if predict_red == 'SEÑAL DE VELOCIDAD DE 110 km/h':
+                    lat, lng = gpscoordenadas.getCoords()
+                    # print(lat,lng)
+                    asyncio.run(handle_detection('7', [lat, lng]))
+                if predict_red == '_NO SOBREPASAR':
+                    lat, lng = gpscoordenadas.getCoords()
+                    # print(lat,lng)
+                    asyncio.run(handle_detection('8', [lat, lng]))
+                if predict_red == 'CONTRAMANO':
+                    lat, lng = gpscoordenadas.getCoords()
+                    # print(lat,lng)
+                    asyncio.run(handle_detection('12', [lat, lng]))
+                if predict_red == 'TERRENO RESBALADIZO':
+                    lat, lng = gpscoordenadas.getCoords()
+                    # print(lat,lng)
+                    asyncio.run(handle_detection('21', [lat, lng]))
+                if predict_red == 'CIERRE CARRIL':
+                    lat, lng = gpscoordenadas.getCoords()
+                    # print(lat,lng)
+                    asyncio.run(handle_detection('22', [lat, lng]))
+                if predict_red == 'CUIDADO BICICLETAS':
+                    lat, lng = gpscoordenadas.getCoords()
+                    # print(lat,lng)
+                    asyncio.run(handle_detection('26', [lat, lng]))
                 if predict_red:
                     lat, lng = gpscoordenadas.getCoords()
                     # print(lat,lng)

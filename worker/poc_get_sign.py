@@ -2,10 +2,7 @@ import cv2
 import numpy as np
 import identify_red
 
-# imag = np.uint8(cv2.imread('./my_test_set/testnico10.png'))
-# imag = np.uint8(cv2.imread('./my_test_set/amarelo.jpg'))
-# imag = np.uint8(cv2.imread('./my_test_set/testnico1.png'))
-imag = np.uint8(cv2.imread('./my_test_set/testnico6.png'))
+imag = np.uint8(cv2.imread('./data/my_test_set/cierre-carril-test/00044.png'))
 
 result_red = identify_red.identify(imag)
 

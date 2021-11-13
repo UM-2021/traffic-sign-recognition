@@ -91,7 +91,7 @@ def identify(imag):
 
         for c in cnts_sorted:
             x, y, w, h = cv2.boundingRect(c)
-            print("BOUNDING", x, y, w, h)
+            # print("BOUNDING", x, y, w, h)
             # if x < 800:
             #     continue
             # aspect_ratio_1 = w / h
