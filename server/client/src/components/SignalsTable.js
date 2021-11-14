@@ -119,8 +119,7 @@ export default function SignalsTable() {
   React.useEffect(() => {
     const fetchSigns = async () => {
       setLoading(true);
-      const res = await instance('/api/signs/type');
-      console.log(res);
+      const res = await instance('/api/signs/type', { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
       let signs = res.data.data.data;
       setRows(signs);
       setLoading(false);

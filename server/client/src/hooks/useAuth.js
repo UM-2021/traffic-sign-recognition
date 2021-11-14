@@ -19,7 +19,7 @@ export const AuthProvider = ({ children }) => {
       sessionStorage.setItem('loggedIn', 'true');
       localStorage.setItem('token', res.data.token);
       await sleep(1000);
-      
+
       setAuthed(true);
       return res;
     } catch (e) {
@@ -30,7 +30,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = async () => {
-    await instance('/api/users/logout');
+    await instance('/api/users/logout', { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
     sessionStorage.setItem('loggedIn', 'false');
     localStorage.clear();
     setAuthed(false);

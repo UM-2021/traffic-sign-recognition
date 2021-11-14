@@ -20,7 +20,7 @@ function DashboardContent() {
       const tzoffset = new Date().getTimezoneOffset() * 60000;
       const today = new Date(Date.now() - tzoffset);
       const todayStr = today.toISOString().split('T')[0];
-      const signs = await instance(`/api/signs/records?identifiedAt[gte]=${todayStr}`);
+      const signs = await instance(`/api/signs/records?identifiedAt[gte]=${todayStr}`, { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
       setTotalSigns(signs.data.results);
       setLoading(false);
     };
