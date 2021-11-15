@@ -7,11 +7,17 @@ from sklearn import svm
 
 
 def train_red():
-    folder_train_red = [["data/my_train_set/red_signs/ceda-el-paso-signal", "CEDA EL PASO"], ["data/my_train_set/red_signs/no-sobrepasar", "NO SOBREPASAR"], ["data/my_train_set/red_signs/pare-signal", "PARE"],
-                        ["data/my_train_set/red_signs/velocidad-signal/45km", "SEÑAL DE VELOCIDAD 45 km/h"], ["data/my_train_set/red_signs/velocidad-signal/60km", "SEÑAL DE VELOCIDAD 60 km/h"], 
-                        ["data/my_train_set/red_signs/velocidad-signal/90km", "SEÑAL DE VELOCIDAD 90 km/h"],["data/my_train_set/red_signs/velocidad-signal/110km", "SEÑAL DE VELOCIDAD 110 km/h"],
-                        ["data/my_train_set/red_signs/cierre-carril", "CIERRE CARRIL"], ["data/my_train_set/red_signs/contramano", "CONTRAMANO"], 
-                        ["data/my_train_set/red_signs/cuidado-bicicletas", "CUIDADO BICICLETAS"], ["data/my_train_set/red_signs/terreno-resbaladizo", "TERRENO RESBALADIZO"] ]
+    folder_train_red = [["data/my_train_set/red_signs/ceda-el-paso-signal", 14],
+                        ["data/my_train_set/red_signs/no-sobrepasar", 8],
+                        ["data/my_train_set/red_signs/pare-signal", 13],
+                        ["data/my_train_set/red_signs/velocidad-signal/30km", 1],
+                        ["data/my_train_set/red_signs/velocidad-signal/60km", 3], 
+                        ["data/my_train_set/red_signs/velocidad-signal/90km", 6],
+                        ["data/my_train_set/red_signs/velocidad-signal/110km", 7],
+                        ["data/my_train_set/red_signs/cierre-carril", 22],
+                        ["data/my_train_set/red_signs/contramano", 12], 
+                        ["data/my_train_set/red_signs/cuidado-bicicletas", 26],
+                        ["data/my_train_set/red_signs/terreno-resbaladizo", 21] ]
                     
     hog_list_red = list()
     label_list_red = list()
