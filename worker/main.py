@@ -74,7 +74,7 @@ cam = cv2.VideoCapture(0)
 start_time = time.process_time()
 while True:
     ret, image = cam.read()
-    # cv2.imshow('Imagetest', image)
+    cv2.imshow('Imagetest', image)
     k = cv2.waitKey(1)
     if k != -1:
         break
@@ -94,9 +94,12 @@ while True:
         if result_red and predict_prob_red > 0.8:
             print("PROB RED PREDICTION: ", predict_prob_red)
             print("RED PREDICTION: ", predict_red)
+
             # cv2.imshow("image", result_resize_red)
             # cv2.waitKey(0)
 
+            lat, lng = gpscoordenadas.getCoords()
+            asyncio.run(handle_detection(predict_red, [lat, lng]))
 
             if False: # Dead code for now. 
                 if predict_red == 'PARE':
