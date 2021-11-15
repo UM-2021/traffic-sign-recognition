@@ -26,6 +26,12 @@ const dateFormatter = (t) => {
   return t.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 };
 
+function sameDay(d1, d2) {
+  return d1.getFullYear() === d2.getFullYear() &&
+    d1.getMonth() === d2.getMonth() &&
+    d1.getDate() === d2.getDate();
+}
+
 export default function Chart() {
   const theme = useTheme();
   const [loading, setLoading] = React.useState(false);
@@ -35,19 +41,16 @@ export default function Chart() {
     const fetchSigns = async () => {
       setLoading(true);
 
-      const res = await instance('/api/signs/records/date');
+      const res = await instance('/api/signs/records/date', { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
       let signs = res.data.data.data;
       signs = signs.map((s) => ({ ...s, date: new Date(s.date) }));
+      let date = new Date();
 
-      const minDate = new Date(Math.min(...signs.map((s) => s.date)));
-      let date = new Date(minDate);
+      for (let i = 1; i <= 10; i++) {
+        if (signs.filter(s => sameDay(s.date, date)).length === 0)
+          signs.push({ date: new Date(date), count: 0 });
 
-      const signsLength = signs.length;
-      if (signsLength < 10) {
-        for (let i = 1; i <= 10 - signsLength; i++) {
-          const newDate = date.setDate(date.getDate() - 1);
-          signs.push({ date: new Date(newDate), count: 0 });
-        }
+        date.setDate(date.getDate() - 1);
       }
 
       signs.sort((a, b) => (a.date > b.date ? 1 : b.date > a.date ? -1 : 0));

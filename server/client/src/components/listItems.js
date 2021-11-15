@@ -23,7 +23,7 @@ export const mainListItems = (
       </ListItemIcon>
       <ListItemText primary="Señales" />
     </ListItem>
-    <ListItem component={Link} to="/me" button>
+    <ListItem button>
       <ListItemIcon>
         <AccountCircleIcon />
       </ListItemIcon>

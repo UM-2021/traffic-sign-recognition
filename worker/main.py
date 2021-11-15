@@ -11,7 +11,6 @@ from utils import gpscoordenadas
 import time
 from requests.structures import CaseInsensitiveDict
 
-
 def internet_on():
     try:
         # maybe change this after to our server
@@ -47,7 +46,7 @@ async def handle_detection(sign, coords):
             for line in lines:
                 values = line.split(',')
                 if len(values) == 3 and values[0].isnumeric() and values[1].isnumeric() and values[2].isnumeric():
-                    # await send_sign(line)
+                    await send_sign(line)
                     await send_detection(values[0], [values[1], values[2]])
         open('todo_requests.txt', 'w').close()
         if sign.isnumeric():
@@ -95,8 +94,13 @@ while True:
         if result_red and predict_prob_red > 0.8:
             print("PROB RED PREDICTION: ", predict_prob_red)
             print("RED PREDICTION: ", predict_red)
+
             # cv2.imshow("image", result_resize_red)
             # cv2.waitKey(0)
+
+            lat, lng = gpscoordenadas.getCoords()
+            asyncio.run(handle_detection(predict_red, [lat, lng]))
+
             if False: # Dead code for now. 
                 if predict_red == 'PARE':
                     lat, lng = gpscoordenadas.getCoords()

@@ -135,7 +135,7 @@ export default function EnhancedTable() {
   React.useEffect(() => {
     const fetchSigns = async () => {
       setLoading(true);
-      const res = await instance('/api/signs/locations');
+      const res = await instance('/api/signs/locations', { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
       let signs = res.data.data.data;
       for (const sign of signs) {
         sign.address = await getAddressFromCoordinates(sign.location.coordinates);
