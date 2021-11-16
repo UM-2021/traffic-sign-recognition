@@ -69,7 +69,7 @@ if not os.path.exists(image_directory):
     os.makedirs(image_directory)
 
 # Initialize the video
-cam = cv2.VideoCapture('./data/my_test_set/test-video2.mp4')
+cam = cv2.VideoCapture('./data/my_test_set/v-ejemplo.mp4')  # /home/pi/traffic-sign-recognition/worker/data/my_test_set/v-ejemplo.mp4
 
 try:
     # creating a folder named data

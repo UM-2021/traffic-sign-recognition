@@ -27,17 +27,17 @@ async def send_sign(sign):
         await websocket.send(sign)
 
 
-async def send_detection(sign, coords):
-    token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxN2UxYjQ2YjNkY2U4YTFlMjE1NDRlMiIsImlhdCI6MTYzNjM5OTQyNCwiZXhwIjoxNjQ0MTc1NDI0fQ.gsff9f7Vh6Ff1OFchK-Gp-2zXbhj1cN-OAsyip1353Y"
+def send_detection(sign, coords):
+    token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxOGE5MmE0YWIyYzMzODMyYWNjMWZkNSIsImlhdCI6MTYzNjk4MzE3NCwiZXhwIjoxNjQ0NzU5MTc0fQ.noW0RJSPLko0DaNpnsA6HtEClxfJDHTI974BqSizKGg"
     headers = CaseInsensitiveDict()
     headers["Authorization"] = f"Bearer {token}"
     pload = {'sign': sign, 'coordinates': coords}
-    resp = requests.post(
-        'https://179.27.97.57:3000/signs/locations', data=pload, headers=headers)
-    print(resp.status_code)
+    requests.post(
+        'http://179.27.97.57:3000/api/signs/locations', data=pload, headers=headers)
 
 
 async def handle_detection(sign, coords):
+    await send_sign(sign)
     if internet_on():
         print("Internet connection established")
         with open('todo_requests.txt') as file:
@@ -46,17 +46,15 @@ async def handle_detection(sign, coords):
             for line in lines:
                 values = line.split(',')
                 if len(values) == 3 and values[0].isnumeric() and values[1].isnumeric() and values[2].isnumeric():
-                    await send_sign(line)
-                    await send_detection(values[0], [values[1], values[2]])
+                    send_detection(values[0], [values[1], values[2]])
         open('todo_requests.txt', 'w').close()
         if sign.isnumeric():
             print("Ready to send sign...", sign)
-            await send_sign(sign)
-            await send_detection(sign, coords)
+            send_detection(sign, coords)
     else:
         print("No Internet connection")
         with open('todo_requests.txt', 'a') as the_file:
-            the_file.write(sign + ',' + coords[0] + ',' + coords[1] + '\n')
+            the_file.write(sign + ',' + str(coords[0]) + ',' + str(coords[1]) + '\n')
 
 # Time (seconds) to wait to extract the frames
 TIME_WINDOW = 1
@@ -71,7 +69,7 @@ if not os.path.exists(image_directory):
 cam = cv2.VideoCapture(0)
 
 # Extracting process
-start_time = time.process_time()
+# start_time = time.process_time()
 while True:
     ret, image = cam.read()
     cv2.imshow('Imagetest', image)
@@ -79,45 +77,48 @@ while True:
     if k != -1:
         break
 
-    time_difference = time.process_time() - start_time
-    if time_difference > TIME_WINDOW:
-        start_time = time.process_time()
-        cv2.imwrite(image_directory + '/image-to-process.jpg', image)
-        result_red = identify_red.identify(image)
-        if result_red:
-            result_resize_red = result_red[0]
-            predict_prob_red = result_red[1]
-            predict_red = result_red[2]
-        print("\n\nRESULTS:")
+    # time_difference = time.process_time() - start_time
+    # if time_difference > TIME_WINDOW:
+        # start_time = time.process_time()
+    cv2.imwrite(image_directory + '/image-to-process.jpg', image)
+    result_red = identify_red.identify(image)
+    if result_red:
+        result_resize_red = result_red[0]
+        predict_prob_red = result_red[1]
+        predict_red = result_red[2]
+    print("\n\nRESULTS:")
 
-        # and predict_prob_red > predict_prob_yellow:
-        if result_red and predict_prob_red > 0.8:
-            print("PROB RED PREDICTION: ", predict_prob_red)
-            print("RED PREDICTION: ", predict_red)
+    # and predict_prob_red > predict_prob_yellow:
+    if result_red and predict_prob_red > 0.8:
+        print("PROB RED PREDICTION: ", predict_prob_red)
+        print("RED PREDICTION: ", predict_red)
 
-            # cv2.imshow("image", result_resize_red)
-            # cv2.waitKey(0)
+        # cv2.imshow("image", result_resize_red)
+        # cv2.waitKey(0)
 
-            lat, lng = gpscoordenadas.getCoords()
-            asyncio.run(handle_detection(predict_red, [lat, lng]))
+        # lat, lng = gpscoordenadas.getCoords()
+        # print(lat, lng)
+        asyncio.run(handle_detection(predict_red[0], [0, 2]))
 
-            if False: # Dead code for now. 
-                if predict_red == 'PARE':
-                    lat, lng = gpscoordenadas.getCoords()
-                    # print(lat,lng)
-                    asyncio.run(handle_detection('1', [lat, lng]))
-                if predict_red == 'CEDA EL PASO':
-                    lat, lng = gpscoordenadas.getCoords()
-                    # print(lat,lng)
-                    asyncio.run(handle_detection('2', [lat, lng]))
-                if predict_red == 'SEÑAL DE VELOCIDAD DE 60 km/h':
-                    lat, lng = gpscoordenadas.getCoords()
-                    # print(lat,lng)
-                    asyncio.run(handle_detection('2', [lat, lng]))
-                if predict_red:
-                    lat, lng = gpscoordenadas.getCoords()
-                    # print(lat,lng)
-                    asyncio.run(handle_detection('2', [lat, lng]))
+        # time.sleep(0.2)
+
+        if False: # Dead code for now. 
+            if predict_red == 'PARE':
+                lat, lng = gpscoordenadas.getCoords()
+                # print(lat,lng)
+                asyncio.run(handle_detection('1', [lat, lng]))
+            if predict_red == 'CEDA EL PASO':
+                lat, lng = gpscoordenadas.getCoords()
+                # print(lat,lng)
+                asyncio.run(handle_detection('2', [lat, lng]))
+            if predict_red == 'SEÑAL DE VELOCIDAD DE 60 km/h':
+                lat, lng = gpscoordenadas.getCoords()
+                # print(lat,lng)
+                asyncio.run(handle_detection('2', [lat, lng]))
+            if predict_red:
+                lat, lng = gpscoordenadas.getCoords()
+                # print(lat,lng)
+                asyncio.run(handle_detection('2', [lat, lng]))
 
 
 cam.release()
